@@ -3,7 +3,7 @@
 Authors
 ===============
 	
-	(Coded at COSMOS UCSC '14)
+	(Coded at COSMOS UCSC 2014)
 	Original Java Code by Louis Lu (nickasds@hotmail.com)
 	Debug and Revised by Andrew Zhang (andrewmzhang12345@gmail.com)
 	Maintained by Louis Lu and Andrew Zhang.
@@ -11,7 +11,7 @@ Authors
 ===============
 Description
 ===============
-	
+
 	This code, when run, allows one to generate a light curve of a binary star.
 	Cicular eclipses are assumed, time is in period phases. Temperature input
 	is in kelvins, radius is arbitrary (units can be whatever you want it to be).
