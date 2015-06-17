@@ -1,0 +1,4 @@
+package eblcg;
+
+public class LightCurveGenerator {
+}
