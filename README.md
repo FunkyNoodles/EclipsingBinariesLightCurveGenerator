@@ -11,7 +11,13 @@ Authors
 ===============
 Description
 ===============
-	NOTE: This decription is currently obsolote as the program is under reconstruction. The new calculation will use spherical coordinates rather than cartesian coordinates, which is easier and slightly more accurate than "slices and polygons" before. Hopefully the new orbital systems can also be elliptical if we could work out the math.
+	NOTE: This decription is currently obsolote as the program is under reconstruction. 
+	The new calculation will use spherical coordinates rather than cartesian coordinates, 
+	which is easier and slightly more accurate than "slices and polygons" before.
+	Some goals:
+		Work out the light curve for elliptic orbis
+		Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross
+		Update GUI from swing to JavaFX
 
 
 	This code, when run, allows one to generate a light curve of a binary star.
@@ -87,8 +93,6 @@ Known Bugs
 	It should be a sliced dodecahedron-like structure.
 	
 	Browse button does not work for MAC OSX
-	Program will not load input boxes correctly on laptops with small screens (should be fixed, but I do not have a mac to test this on...) 
-	
 	
 	If you find a bug, or have questions, please 
 	email andrewmzhang12345@gmail.com or nickasds@hotmail.com
