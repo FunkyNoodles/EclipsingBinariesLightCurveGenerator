@@ -13,8 +13,7 @@
 	which is easier and slightly more accurate than "slices and polygons" before.
 	Some goals:
 		Work out the light curve for elliptic orbits.
-		Work out the light curve from tilted perspective, that is, the centers of the
-		stars do not necessarily cross.
+		Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross.
 		Update GUI from swing to JavaFX.
 
 
@@ -41,9 +40,7 @@
  	Be sure to choose a valid folder location using 'Browse', or the graph will
  	not generate. (Default location is C:/). 
  	
-===============
-Acknowlegements
-===============
+#Acknowlegements
 	Eclipsing Binaries Group:
 		Darragh Hettrick
 		Rohit Chopra
