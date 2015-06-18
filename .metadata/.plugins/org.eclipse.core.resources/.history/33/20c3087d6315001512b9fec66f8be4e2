@@ -1,0 +1,8 @@
+package eblcg;
+
+public class LightCurveGenerator {
+	public static void main(String[] args){
+		Star go = new Star(1000,1000,1000,5000);
+	}
+	
+}

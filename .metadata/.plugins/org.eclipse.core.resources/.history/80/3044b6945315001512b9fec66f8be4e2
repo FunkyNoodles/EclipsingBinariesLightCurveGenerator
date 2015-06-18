@@ -1,0 +1,34 @@
+package eblcg;
+//polar coordinates this time (r, theta)
+public class Star1 {
+	//some properties
+	int rings = 1000;
+	double dr = 0;
+	int sectors = 1000;
+	double dth = 0;
+	double radius = 1000;
+	double energy = 5000;
+	double area = 0;
+	
+	double component[][];
+	
+	double sumTemp = 0;
+	
+	public Star1(){
+		component = new double[rings][sectors];
+		dr = radius/rings;
+		dth = Math.PI/sectors;
+		area = radius*radius*Math.PI;
+		double ringBrightness = 0;
+		for(int ringCounter=1; ringCounter<=rings; ringCounter++){
+			ringBrightness = (Math.pow(dr*(ringCounter),2)*Math.PI - Math.pow(dr*(ringCounter-1),2)*Math.PI)/area/sectors;
+			
+			for(int sectorCounter=0; sectorCounter<sectors; sectorCounter++){
+				//System.out.println(ringCounter + "\t" + sectorCounter);
+				component[ringCounter-1][sectorCounter] = ringBrightness;
+				sumTemp += ringBrightness;
+			}
+		}
+		System.out.println(sumTemp);
+	}
+}

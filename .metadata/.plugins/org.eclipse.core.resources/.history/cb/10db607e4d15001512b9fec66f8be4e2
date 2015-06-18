@@ -1,0 +1,11 @@
+package eblcg;
+//polar coordinates this time
+public class Star1 {
+	//some properties
+	int rings = 0;
+	int sectors = 0;
+	
+	public Star1(){
+		
+	}
+}

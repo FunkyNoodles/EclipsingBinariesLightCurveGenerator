@@ -1,0 +1,66 @@
+package eblcg;
+//polar coordinates this time (r, theta)
+public class Star {
+	//some properties
+	int rings = 0; //number of rings to divide into, will be initialized
+	double dr = 0;
+	int sectors = 0; //number of sectors to divide into, will be initialized
+	double dth = 0; //d-theta
+	double radius = 1000;
+	double temperature = 0;
+	double starBrightness = 0;
+	double area = 0;
+	
+	double component[][];
+	
+	double sumTemp = 0;
+	
+	public Star(int rings, int sectors, int radius, int temperature){
+		this.rings = rings;
+		this.sectors = sectors;
+		this.radius = radius;
+		this.temperature = temperature;
+		
+		initStar();
+	}
+	
+	public void initStar(){
+		component = new double[rings][sectors];
+		dr = radius/rings;
+		dth = Math.PI/sectors;
+		area = radius*radius*Math.PI;
+		//Stefan-Boltzman law and dived by two because only seeing half of the star
+		starBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2; 
+		double ringBrightness = 0;
+		//Because the ring gets larger as radius increases, the brightness assigned to the rings need to be proportional
+		for(int initRingCounter=0; initRingCounter<rings; initRingCounter++){
+			ringBrightness = starBrightness*(Math.pow(dr*(initRingCounter+1),2)*Math.PI - Math.pow(dr*(initRingCounter),2)*Math.PI)/area/sectors;
+			for(int initSectorCounter=0; initSectorCounter<sectors; initSectorCounter++){
+				//System.out.println(ringCounter + "\t" + sectorCounter);
+				component[initRingCounter][initSectorCounter] = ringBrightness;
+				sumTemp += ringBrightness;
+			}
+		}
+		
+		//Now modify the initialized array as gradient vector needs to be taken account
+		//Math is based on spherical coordinates theta = arctan(y/x) and phi = arctan(y/z); component = r*sin(phi)*sin(theta)
+		//theta is angle to x, phi is angle to z
+		//positive y is front
+		double theta = 0, phi = 0;
+		double x = 0, y = 0, z = 0;
+		double rDisk = 0;
+		double angleStep = 0;
+		
+		for(int modRingCounter=0; modRingCounter<rings; modRingCounter++){
+			rDisk = dr*(modRingCounter+1);
+			for(int modSectorCounter=0; modSectorCounter<sectors; modSectorCounter++){
+				angleStep = dth*(modSectorCounter);
+				x = rDisk*Math.cos(angleStep);
+				y = Math.sqrt(rDisk*rDisk-x*x);
+			}
+		}
+		
+		System.out.println(starBrightness);
+		System.out.println(sumTemp);
+	}
+}
