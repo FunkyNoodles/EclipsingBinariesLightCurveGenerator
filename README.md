@@ -3,7 +3,7 @@
 Authors
 ===============
 	
-	(Coded at COSMOS UCSC 2014)
+	(Originally coded at COSMOS UCSC 2014)
 	Original Java Code by Louis Lu (nickasds@hotmail.com)
 	Debug and Revised by Andrew Zhang (andrewmzhang12345@gmail.com)
 	Maintained by Louis Lu and Andrew Zhang.
@@ -11,6 +11,8 @@ Authors
 ===============
 Description
 ===============
+	NOTE: This decription is currently obsolote as the program is under reconstruction. The new calculation will use spherical coordinates rather than cartesian coordinates, which is easier and slightly more accurate than "slices and polygons" before. Hopefully the new orbital systems can also be elliptical if we could work out the math.
+
 
 	This code, when run, allows one to generate a light curve of a binary star.
 	Cicular eclipses are assumed, time is in period phases. Temperature input
@@ -24,7 +26,7 @@ Description
 	limb darkening effect, their graphs will not be accurate, especially when the 
 	two stars vary greatly in size (radius wise). Try using (4000,3000,3000,4000) as a
 	set of inputs, respectively. Notice how in the light curve there is a curved dip
-	and a flat-bottomed dip. This is limb darkening effect kicking in. Other online
+	and a flat-bottomed dip. This is limb darkening effect kicking in. Some other online
 	simulators will not generate this effect. 
 	
 	This simulator does not take in other variables that affect binary stars. First
@@ -76,16 +78,6 @@ Acknowlegements
 	
 		Raffelina Grano
 		Dustin Serrano
-
-===============
-Developing
-===============
-
-	Andrew is currently working:
-		Python version of the java code
-		jar version of the java code [done]
-		exe version of the java code
-		Fixing Bugs in the java code (see below)
 
 ===============
 Known Bugs
