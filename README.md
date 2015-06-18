@@ -42,12 +42,14 @@ illustrate binary light curves, not to be the ultimate binary eclipse simulator.
  
 #Acknowlegements
 Eclipsing Binaries Group:
+
 	Darragh Hettrick
 	Rohit Chopra
 	Andrew Zhang
 	Louis Lu
 	
 Instructors:
+
 	Professor of Astronomy and Astrophysics, Puragra "Raja" Guhathakurta
 	Professor of Computer Engineering Tracy Larrabee
 	Meredith Muller
@@ -57,6 +59,7 @@ Instructors:
 	Astronomers of the Lick Observatory
 
 COSMOS UCSC 2014 Cluster 7: Astronomy:
+
 	Sumin You
 	Eric Wu
 	Emily Villa
@@ -80,9 +83,7 @@ COSMOS UCSC 2014 Cluster 7: Astronomy:
 	Raffelina Grano
 	Dustin Serrano
 
-===============
-Known Bugs
-===============
+#Known Bugs
 
 There are some minor issues in the math, forgot to take into account one dimension in the sliced sphere.
 It should be a sliced dodecahedron-like structure.
@@ -92,9 +93,7 @@ Browse button does not work for MAC OSX
 If you find a bug, or have questions, please 
 email andrewmzhang12345@gmail.com or nickasds@hotmail.com
 
-===============
-BUG FIXES
-===============
+#BUG FIXES
 
 8/6/14: Fixed Graph generating negative percent when run twice
 
