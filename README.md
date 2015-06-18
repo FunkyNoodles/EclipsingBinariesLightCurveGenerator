@@ -3,15 +3,20 @@
 #Authors
 
 (Originally coded at COSMOS UCSC 2014)
+
 Original Java Code by Louis Lu (nickasds@hotmail.com)
+
 Debug and Revised by Andrew Zhang (andrewmzhang12345@gmail.com)
+
 Maintained by Louis Lu and Andrew Zhang.
 
 #Description
 NOTE: This decription is currently obsolote as the program is under reconstruction. 
 The new calculation will use spherical coordinates rather than cartesian coordinates, 
 which is easier and slightly more accurate than "slices and polygons" before.
+
 Some goals:
+
 	Work out the light curve for elliptic orbits.
 	Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross.
 	Update GUI from swing to JavaFX.
