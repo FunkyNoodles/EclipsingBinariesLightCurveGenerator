@@ -15,9 +15,10 @@ Description
 	The new calculation will use spherical coordinates rather than cartesian coordinates, 
 	which is easier and slightly more accurate than "slices and polygons" before.
 	Some goals:
-		Work out the light curve for elliptic orbis
-		Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross
-		Update GUI from swing to JavaFX
+		Work out the light curve for elliptic orbits.
+		Work out the light curve from tilted perspective, that is, the centers of the
+		stars do not necessarily cross.
+		Update GUI from swing to JavaFX.
 
 
 	This code, when run, allows one to generate a light curve of a binary star.
