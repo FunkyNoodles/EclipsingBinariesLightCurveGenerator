@@ -8,12 +8,20 @@ public class Star {
 	double dth = 0; //d-theta
 	double radius = 0;
 	double temperature = 0;
-	double starBrightness = 0; //the hemisphere brightness will be obtained from Stefan-Boltzmann Law
+	double starDirectBrightness = 0; //the hemisphere brightness crudely obtained from Stefan-Boltzmann Law
+	double starBrightness = 0; //The brightness after integration (limb-darkening effect)
 	double area = 0;
 	
 	double component[][];
 	
-	double sumTemp = 0; //This is only for testing
+	//Coordinates used when eclipse
+	double x = 0;
+	double y = 0;
+	
+	double xSector = 0;
+	double ySector = 0;
+	
+	
 	
 	//Interface (percentage output)
 	long percentCounter = 0;
@@ -27,7 +35,7 @@ public class Star {
 		this.temperature = temperature;
 		
 		totalCounter = 2*rings*sectors;
-		System.out.println(totalCounter);
+		//System.out.println(totalCounter);
 		
 		initStar();
 	}
@@ -39,13 +47,13 @@ public class Star {
 		//System.out.println(dth + "\t" + dr);
 		area = radius*radius*Math.PI;
 		//Stefan-Boltzmann law and dived by two because only seeing half of the star
-		starBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2; 
+		starDirectBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2; 
 		double ringBrightness = 0;
 		//Because the ring gets larger as radius increases, the brightness assigned to the rings need to be proportional
 		for(int initRingCounter=0; initRingCounter<rings; initRingCounter++){
-			ringBrightness = starBrightness*(Math.pow(dr*(initRingCounter+1),2)*Math.PI - Math.pow(dr*(initRingCounter),2)*Math.PI)/area/sectors;
+			ringBrightness = starDirectBrightness*(Math.pow(dr*(initRingCounter+1),2)*Math.PI - Math.pow(dr*(initRingCounter),2)*Math.PI)/area;
 			for(int initSectorCounter=0; initSectorCounter<sectors; initSectorCounter++){
-				component[initRingCounter][initSectorCounter] = ringBrightness;
+				component[initRingCounter][initSectorCounter] = ringBrightness/sectors;
 				percentCounter++;
 				percentage = (double)percentCounter/totalCounter;
 			}
@@ -57,21 +65,21 @@ public class Star {
 		//theta is angle to x from the tip of each ring
 		//positive y is front
 		double theta = 0;
-		double y = 0;
+		double ySphere = 0;
 		double rRing = 0;
 		
 		for(int modRingCounter=0; modRingCounter<rings; modRingCounter++){
 			rRing = dr*(modRingCounter+1);
-			y = Math.sqrt(radius*radius-rRing*rRing);
-			theta = Math.abs(Math.atan(y/rRing));
+			ySphere = Math.sqrt(radius*radius-rRing*rRing);
+			theta = Math.abs(Math.atan(ySphere/rRing));
 			for(int modSectorCounter=0; modSectorCounter<sectors; modSectorCounter++){
 				component[modRingCounter][modSectorCounter] *= Math.sin(theta);
-				sumTemp += component[modRingCounter][modSectorCounter];
+				starBrightness += component[modRingCounter][modSectorCounter];
 				percentCounter++;
 				percentage = (double)percentCounter/totalCounter;
 			}
 		}
+		System.out.println(starDirectBrightness);
 		System.out.println(starBrightness);
-		System.out.println(sumTemp);
 	}
 }

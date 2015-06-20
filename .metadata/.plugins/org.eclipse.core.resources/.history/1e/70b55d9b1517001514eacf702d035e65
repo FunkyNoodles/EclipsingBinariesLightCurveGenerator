@@ -1,0 +1,7 @@
+package eblcg;
+
+public class Calculate {
+	public Calculate(){
+		
+	}
+}

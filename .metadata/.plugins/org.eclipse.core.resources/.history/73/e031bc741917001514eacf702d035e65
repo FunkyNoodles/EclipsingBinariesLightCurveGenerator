@@ -1,0 +1,44 @@
+package eblcg;
+
+public class LightCurveGenerator {
+	
+	static Star star1 = new Star(1000, 1000, 1000, 7000);
+	static Star star2 = new Star(1000, 1000, 2000, 8000);
+	
+	//for eclipse
+	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
+	static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
+	static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
+	
+	//test
+	
+	
+	public static void main(String[] args){
+		star2.x = star1.radius+star2.radius;
+		for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
+			star2.x -= step1;
+			System.out.println(eclipse());
+		}
+	}
+	public static double eclipse(){
+		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system
+		 * and the front star's center is exactly star1 radius + star2 radius away from the back star
+		 * At this point, the front star is assumed to start at the x-axis and only follow the x-axis,
+		 * this hopefully will be more generalized as the development goes on
+		 */
+		double systemBrightness = star1.starBrightness + star2.starBrightness;
+		//for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
+			for(int ringCounter=0; ringCounter<star1.rings; ringCounter++){
+				for(int sectorCounter=0; sectorCounter<star1.sectors; sectorCounter++){
+					star1.xSector = ringCounter*star1.dr*Math.cos(sectorCounter*star1.dth);
+					star1.ySector = ringCounter*star1.dr*Math.sin(sectorCounter*star1.dth);
+					if(Math.sqrt(Math.pow(star1.xSector-star2.x,2)+Math.pow(star1.ySector-star2.y, 2) < star2.radius)){
+						
+					}
+				}
+			}
+		//}
+		return systemBrightness;
+	}
+	
+}
