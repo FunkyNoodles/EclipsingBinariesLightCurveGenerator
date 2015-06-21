@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 public class LightCurveGenerator {
 	
-	static Star star2 = new Star(1000, 1000, 1000, 7000);
-	static Star star1 = new Star(1000, 1000, 2000, 8000);
+	public static Star star2 = new Star(1000, 1000, 4000, 1000, 7000);
+	public static Star star1 = new Star(1000, 1000, 3000, 2000, 8000);
 	
 	//for eclipse
 	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
@@ -16,8 +16,12 @@ public class LightCurveGenerator {
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
 	static ArrayList<Double> derivative = new ArrayList<Double>();
 	
+	//GUI
+	static GUI go = new GUI();
+	
 	public static void main(String[] args){
-		//The content of main class is temporary for testing is also temporary
+		go.init(args);
+		/*//The content of main class is temporary for testing is also temporary
 		star2.x = star1.radius+star2.radius;
 		for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
 			star2.x -= step1;
@@ -29,11 +33,11 @@ public class LightCurveGenerator {
 			star1.x -= step2;
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
-		}
+		}*/
 	}
 	
 	public static void generateGraph(){
-		//TO DO
+		//TODO
 	}
 	public static double eclipse(int starInFront){
 		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system

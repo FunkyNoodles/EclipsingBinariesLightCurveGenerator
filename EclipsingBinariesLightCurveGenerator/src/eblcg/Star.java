@@ -1,7 +1,7 @@
 package eblcg;
 //polar coordinates this time (r, theta)
 public class Star {
-	//some properties
+	//Star properties
 	int rings = 0; //number of rings to divide into, will be initialized
 	double dr = 0;
 	int sectors = 0; //number of sectors to divide into, will be initialized
@@ -11,14 +11,21 @@ public class Star {
 	double starDirectBrightness = 0; //the hemisphere brightness crudely obtained from Stefan-Boltzmann Law
 	double starBrightness = 0; //The brightness after integration (limb-darkening effect)
 	double area = 0;
+	double mass = 0;
 	
 	double component[][];
 	
+	//Orbital properties
+	double eccentricity = 0;
+	double periapsis = 0;
+	double apoapsis = 0;
+	double semiMajorAxis = 0;
+	
 	//Coordinates used when eclipse
-	double x = 0;
+	double x = 0; //actual positions
 	double y = 0;
 	
-	double xSector = 0;
+	double xSector = 0; //sector positions
 	double ySector = 0;
 	
 	
@@ -28,11 +35,12 @@ public class Star {
 	long totalCounter = 0;
 	double percentage = 0;
 	
-	public Star(int rings, int sectors, int radius, int temperature){
+	public Star(int rings, int sectors, double mass, double radius, double temperature){
 		this.rings = rings;
 		this.sectors = sectors;
 		this.radius = radius;
 		this.temperature = temperature;
+		this.mass = mass;
 		
 		totalCounter = 2*rings*sectors;
 		//System.out.println(totalCounter);

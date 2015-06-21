@@ -12,8 +12,8 @@ Maintained by Louis Lu and Andrew Zhang.
 
 #Description
 NOTE: This decription is currently obsolote as the program is under reconstruction. 
-The new calculation will use spherical coordinates rather than cartesian coordinates, 
-which is easier and slightly more accurate than "slices and polygons" before.
+The new calculation will use spherical coordinates rather than cartesian coordinates to divide the spheres, 
+which is easier and slightly more accurate than "slices and polygons" before. The eclipse algorithms is more efficient this time since it is set in a coordinate system.
 
 Some goals:
 
@@ -22,6 +22,8 @@ Some goals:
 	Update GUI from swing to JavaFX.
 
 
+
+###This is obsolete
 This code, when run, allows one to generate a light curve of a binary star.
 Cicular eclipses are assumed, time is in period phases. Temperature input
 is in kelvins, radius is arbitrary (units can be whatever you want it to be).

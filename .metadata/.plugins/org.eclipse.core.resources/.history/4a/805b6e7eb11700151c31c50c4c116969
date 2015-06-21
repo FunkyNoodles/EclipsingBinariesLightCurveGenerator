@@ -1,0 +1,13 @@
+/*
+ * http://faculty.wwu.edu/~vawter/physicsnet/topics/Gravity/BinaryStars.html
+ */
+package eblcg;
+
+public class Orbit {
+	double eccentricity = 0;
+	public Orbit(double eccentricity, double apoapsis1, double apoapsis2){
+		LightCurveGenerator.star1.apoapsis = apoapsis1;
+		LightCurveGenerator.star2.apoapsis = apoapsis2;
+		
+	}
+}
