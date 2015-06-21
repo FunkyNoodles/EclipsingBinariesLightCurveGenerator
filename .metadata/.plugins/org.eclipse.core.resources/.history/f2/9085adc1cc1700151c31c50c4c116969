@@ -29,8 +29,12 @@ public class Orbit {
 	}
 	
 	public double getEclipseTime(int starInFront){
-		double eclipseTime = 0;
-		//TODO
-		return eclipseTime;
+		double eclipseTime;
+		if(starInFront == 1){
+			
+		}
+		if(starInFront == 2){
+			
+		}
 	}
 }

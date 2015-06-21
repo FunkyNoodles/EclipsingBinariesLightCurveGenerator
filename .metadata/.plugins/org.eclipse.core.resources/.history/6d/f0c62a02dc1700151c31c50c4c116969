@@ -43,7 +43,6 @@ public class LightCurveGenerator {
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
 		}
-		generateGraph();
 	}
 	public static void generateGraph(){
 		XYSeries series = new XYSeries("XYGrapsh");

@@ -10,12 +10,12 @@ public class Star {
 	double dr = 0;
 	int sectors = 0; //number of sectors to divide into, will be initialized
 	double dth = 0; //d-theta
-	double radius = 0; //in meters
+	double radius = 0;
 	double temperature = 0;
 	double starDirectBrightness = 0; //the hemisphere brightness crudely obtained from Stefan-Boltzmann Law
 	double starBrightness = 0; //The brightness after integration (limb-darkening effect)
 	double area = 0;
-	double mass = 0; //in kg
+	double mass = 0;
 	
 	double component[][];
 	
@@ -24,8 +24,6 @@ public class Star {
 	double periapsis = 0;
 	double apoapsis = 0;
 	double semiMajorAxis = 0;
-	double vPeri = 0; //Periapsis velocity
-	double vApo = 0; //Apoapsis velocity
 	
 	//Coordinates used when eclipse
 	double x = 0; //actual positions

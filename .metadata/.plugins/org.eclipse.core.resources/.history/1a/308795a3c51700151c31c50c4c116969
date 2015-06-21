@@ -1,20 +1,11 @@
 package eblcg;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartUtilities;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 public class LightCurveGenerator {
 	
-	public static Star star1 = new Star(1000, 1000, 1.1, 1.227, 5790); //for Alpha Centauri A
-	public static Star star2 = new Star(1000, 1000, 0.907, 0.865, 5260); //for Alpha Centauri B
+	public static Star star2 = new Star(1000, 1000, 4000, 1000, 7000);
+	public static Star star1 = new Star(1000, 1000, 3000, 2000, 8000);
 	
 	//for eclipse
 	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
@@ -29,8 +20,8 @@ public class LightCurveGenerator {
 	static GUI go = new GUI();
 	
 	public static void main(String[] args){
-		//go.init(args);
-		//The content of main class is temporary for testing is also temporary
+		go.init(args);
+		/*//The content of main class is temporary for testing is also temporary
 		star2.x = star1.radius+star2.radius;
 		for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
 			star2.x -= step1;
@@ -42,35 +33,12 @@ public class LightCurveGenerator {
 			star1.x -= step2;
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
-		}
-		generateGraph();
+		}*/
 	}
+	
 	public static void generateGraph(){
-		XYSeries series = new XYSeries("XYGrapsh");
-		for(int graphCounter=0; graphCounter<plotPoints.size(); graphCounter++){
-			series.add(graphCounter, plotPoints.get(graphCounter));
-		}
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
-		JFreeChart chart = ChartFactory.createXYLineChart(
-                "Luminous Intensity vs. Phase", // Title
-                "Phase", // x-axis Label
-                "Luminous Intensity", // y-axis Label
-                dataset, // Dataset
-                PlotOrientation.VERTICAL, // Plot Orientation
-                true, // Show Legend
-                true, // Use tooltips
-                false // Configure chart to generate URLs?
-        );
-		try {
-		        System.out.println("Creating Graph...");
-		        //Create the chart
-		        ChartUtilities.saveChartAsJPEG(new File("D:\\test.jpg"), chart, 1280, 720);
-		    } catch (IOException e) {
-		        System.err.println("Error: Check save location");
-		        return;
-		    }
-		}
+		//TODO
+	}
 	public static double eclipse(int starInFront){
 		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system
 		 * and the front star's center is exactly star1 radius + star2 radius away from the back star

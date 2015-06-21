@@ -43,7 +43,6 @@ public class LightCurveGenerator {
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
 		}
-		generateGraph();
 	}
 	public static void generateGraph(){
 		XYSeries series = new XYSeries("XYGrapsh");
@@ -51,7 +50,6 @@ public class LightCurveGenerator {
 			series.add(graphCounter, plotPoints.get(graphCounter));
 		}
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
 		JFreeChart chart = ChartFactory.createXYLineChart(
                 "Luminous Intensity vs. Phase", // Title
                 "Phase", // x-axis Label

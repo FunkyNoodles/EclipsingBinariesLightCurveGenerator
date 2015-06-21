@@ -43,7 +43,6 @@ public class LightCurveGenerator {
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
 		}
-		generateGraph();
 	}
 	public static void generateGraph(){
 		XYSeries series = new XYSeries("XYGrapsh");
@@ -51,7 +50,6 @@ public class LightCurveGenerator {
 			series.add(graphCounter, plotPoints.get(graphCounter));
 		}
 		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
 		JFreeChart chart = ChartFactory.createXYLineChart(
                 "Luminous Intensity vs. Phase", // Title
                 "Phase", // x-axis Label
@@ -62,15 +60,15 @@ public class LightCurveGenerator {
                 true, // Use tooltips
                 false // Configure chart to generate URLs?
         );
-		try {
-		        System.out.println("Creating Graph...");
-		        //Create the chart
-		        ChartUtilities.saveChartAsJPEG(new File("D:\\test.jpg"), chart, 1280, 720);
-		    } catch (IOException e) {
-		        System.err.println("Error: Check save location");
-		        return;
-		    }
-		}
+		 try {
+	            System.out.println("Creating Graph...");
+	            //Create the chart
+	            ChartUtilities.saveChartAsJPEG(new File(GUISetup.dir + "/" + GUISetup.filename), chart, go.imageWidth, go.imageHeight);
+	        } catch (IOException e) {
+	            System.err.println("Error: Check save location");
+	            return;
+	        }
+	}
 	public static double eclipse(int starInFront){
 		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system
 		 * and the front star's center is exactly star1 radius + star2 radius away from the back star
