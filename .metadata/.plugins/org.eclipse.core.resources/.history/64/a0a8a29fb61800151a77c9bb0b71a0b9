@@ -26,7 +26,6 @@ public class Star {
 	double semiMajorAxis = 0;
 	double vPeri = 0; //Periapsis velocity
 	double vApo = 0; //Apoapsis velocity
-	double period = 0;
 	
 	//Coordinates used when eclipse
 	double x = 0; //actual positions

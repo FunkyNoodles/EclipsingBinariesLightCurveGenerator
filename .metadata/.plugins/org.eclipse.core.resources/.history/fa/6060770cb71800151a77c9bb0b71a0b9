@@ -23,7 +23,7 @@ public class Orbit {
 		LightCurveGenerator.star1.periapsis = LightCurveGenerator.star1.semiMajorAxis*(1-LightCurveGenerator.star1.eccentricity);
 		LightCurveGenerator.star2.periapsis = LightCurveGenerator.star2.semiMajorAxis*(1-LightCurveGenerator.star2.eccentricity);
 		LightCurveGenerator.star1.period = 2*Math.PI*Math.sqrt((Math.pow(LightCurveGenerator.star1.semiMajorAxis+LightCurveGenerator.star2.semiMajorAxis, 3)/(G*totalMass)));
-		LightCurveGenerator.star2.period = LightCurveGenerator.star1.period;
+		LightCurveGenerator.star2.period = LightCurveGenerator.star1.period
 		LightCurveGenerator.star1.vPeri = Math.sqrt(G*totalMass*(2/LightCurveGenerator.star1.periapsis-1/LightCurveGenerator.star1.semiMajorAxis));
 		LightCurveGenerator.star2.vPeri = Math.sqrt(G*totalMass*(2/LightCurveGenerator.star2.periapsis-1/LightCurveGenerator.star2.semiMajorAxis));
 		LightCurveGenerator.star1.vApo = Math.sqrt(G*totalMass*(2/LightCurveGenerator.star1.apoapsis-1/LightCurveGenerator.star1.semiMajorAxis));
