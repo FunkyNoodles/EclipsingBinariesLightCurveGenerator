@@ -24,9 +24,11 @@ public class Star {
 	double periapsis = 0;
 	double apoapsis = 0;
 	double semiMajorAxis = 0;
+	double semiMinorAxis = 0;
+	double focus = 0;
 	double vPeri = 0; //Periapsis velocity
 	double vApo = 0; //Apoapsis velocity
-	double period = 0;
+	double period = 0; //seconds
 	
 	//Coordinates used when eclipse
 	double x = 0; //actual positions
@@ -34,6 +36,11 @@ public class Star {
 	
 	double xSector = 0; //sector positions
 	double ySector = 0;
+	
+	//for orbits
+	double currentRadius = 0;
+	double xPerspective = 0;
+	double yPerspective = 0;
 	
 	
 	
@@ -45,9 +52,9 @@ public class Star {
 	public Star(int rings, int sectors, double mass, double radius, double temperature){
 		this.rings = rings;
 		this.sectors = sectors;
-		this.radius = radius*Math.pow(6.955, 8);
+		this.radius = radius*6.955*Math.pow(10, 8);
 		this.temperature = temperature;
-		this.mass = mass*Math.pow(1.9891, 30);
+		this.mass = mass*1.9891*Math.pow(10, 30);
 		
 		totalCounter = 2*rings*sectors;
 		//System.out.println(totalCounter);
@@ -94,7 +101,7 @@ public class Star {
 				percentage = (double)percentCounter/totalCounter;
 			}
 		}
-		System.out.println(starDirectBrightness);
-		System.out.println(starBrightness);
+		//System.out.println(starDirectBrightness);
+		//System.out.println(starBrightness);
 	}
 }

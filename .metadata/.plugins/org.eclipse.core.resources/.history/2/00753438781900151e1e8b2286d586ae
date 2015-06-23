@@ -1,0 +1,42 @@
+/*
+ * http://faculty.wwu.edu/~vawter/physicsnet/topics/Gravity/BinaryStars.html
+ * http://faculty.wwu.edu/~vawter/physicsnet/topics/Gravity/KeplersLaws.html
+ */
+package eblcg;
+
+public class Orbit {
+	
+	double totalMass = 0;
+	double distance = 0;
+	private final double G = Math.pow(6.671, -11);
+	
+	public Orbit(double eccentricity, double distance){
+		//Assigning stars' orbital properties
+		totalMass = star1.mass+star2.mass;
+		this.distance = distance*Math.pow(1.49597870700, 11); //AU
+		star1.apoapsis = this.distance*star2.mass/(totalMass);
+		star2.apoapsis = this.distance-star1.apoapsis;
+		star1.eccentricity = eccentricity;
+		star2.eccentricity = eccentricity;
+		star1.semiMajorAxis = star1.apoapsis/(1+star1.eccentricity);
+		star2.semiMajorAxis = star2.apoapsis/(1+star2.eccentricity);
+		star1.semiMinorAxis = star1.semiMajorAxis*Math.sqrt(1-Math.pow(star1.eccentricity, 2));
+		star2.semiMinorAxis = star2.semiMajorAxis*Math.sqrt(1-Math.pow(star2.eccentricity, 2));
+		star1.focus = Math.sqrt(Math.pow(star1.semiMajorAxis, 2)-Math.pow(star1.semiMinorAxis, 2));
+		star2.focus = Math.sqrt(Math.pow(star2.semiMajorAxis, 2)-Math.pow(star2.semiMinorAxis, 2));
+		star1.periapsis = star1.semiMajorAxis*(1-star1.eccentricity);
+		star2.periapsis = star2.semiMajorAxis*(1-star2.eccentricity);
+		star1.period = 2*Math.PI*Math.sqrt((Math.pow(star1.semiMajorAxis+star2.semiMajorAxis, 3)/(G*totalMass)));
+		star2.period = star1.period;
+		star1.vPeri = Math.sqrt(G*totalMass*(2/star1.periapsis-1/star1.semiMajorAxis));
+		star2.vPeri = Math.sqrt(G*totalMass*(2/star2.periapsis-1/star2.semiMajorAxis));
+		star1.vApo = Math.sqrt(G*totalMass*(2/star1.apoapsis-1/star1.semiMajorAxis));
+		star2.vApo = Math.sqrt(G*totalMass*(2/star2.apoapsis-1/star2.semiMajorAxis));
+	}
+	
+	public double getEclipseTime(int starInFront){
+		double eclipseTime = 0;
+		//TODO
+		return eclipseTime;
+	}
+}

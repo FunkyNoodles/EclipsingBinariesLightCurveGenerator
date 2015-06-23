@@ -13,13 +13,16 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class LightCurveGenerator {
 	
-	public static Star star1 = new Star(1000, 1000, 1.1, 1.227, 5790); //for Alpha Centauri A
-	public static Star star2 = new Star(1000, 1000, 0.907, 0.865, 5260); //for Alpha Centauri B
+	public static Star star1 = new Star(1000, 1000, 1.1, 5000.0, 5790); //for Alpha Centauri A
+	public static Star star2 = new Star(1000, 1000, 0.907, 6000.0, 5260); //for Alpha Centauri B
 	
 	//for eclipse
 	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
 	static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
 	static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
+	
+	static double timeSlice = 10000; //will be customizable
+	static double timeIncrement = 0;
 	
 	//ArrayLists
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
@@ -28,10 +31,18 @@ public class LightCurveGenerator {
 	//GUI
 	static GUI go = new GUI();
 	
+	//Orbit
+	static double totalMass = 0;
+	static double distance = 0;
+	
+	//Constants
+	private final static double G = 6.671*Math.pow(10, -11);
+	
 	public static void main(String[] args){
+		initOrbit(0.52, 36);
 		//go.init(args);
 		//The content of main class is temporary for testing is also temporary
-		star2.x = star1.radius+star2.radius;
+		/*star2.x = star1.radius+star2.radius;
 		for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
 			star2.x -= step1;
 			//System.out.println(eclipse(2));
@@ -42,9 +53,48 @@ public class LightCurveGenerator {
 			star1.x -= step2;
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
-		}
+		}*/
+		progress();
 		generateGraph();
 	}
+	
+	public static void progress(){
+		timeIncrement = star1.period/timeSlice;
+		double currentAngle = 0;
+		while(currentAngle <= 2*Math.PI){
+			if(Math.abs(currentAngle) < 0.001){
+				timeIncrement = timeIncrement/1;
+			}else{
+				timeIncrement = star1.period/timeSlice;
+			}
+			//for star1, theta=0 points towards center, so use negative for ellipse in polar coordinates
+			star1.currentRadius = star1.semiMajorAxis*(1-Math.pow(star1.eccentricity, 2))/(1-star1.eccentricity*Math.cos(currentAngle));
+			star2.currentRadius = star2.semiMajorAxis*(1-Math.pow(star2.eccentricity, 2))/(1-star2.eccentricity*Math.cos(currentAngle));
+			star1.yPerspective = star1.currentRadius*Math.cos(currentAngle);
+			star2.yPerspective = star2.currentRadius*Math.cos(currentAngle+Math.PI/2);
+			star1.xPerspective = star1.currentRadius*Math.sin(currentAngle);
+			star2.xPerspective = star2.currentRadius*Math.sin(currentAngle+Math.PI/2);
+			currentAngle += 2*Math.PI*star1.semiMajorAxis*star1.semiMinorAxis*timeIncrement/star1.period/Math.pow(star1.currentRadius, 2);
+			//System.out.println(star1.currentRadius +"\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
+			//System.out.println(currentAngle);
+			if(Math.abs(star1.yPerspective)+Math.abs(star2.yPerspective)<star1.radius+star2.radius){
+				if(star1.xPerspective > star2.xPerspective){
+					plotPoints.add(eclipse(1));
+					//System.out.println(star1.yPerspective + "\t" + star2.yPerspective);
+				}else if(star1.xPerspective < star2.xPerspective){
+					plotPoints.add(eclipse(2));
+					//System.out.println(star1.yPerspective + "\t" + star2.yPerspective);
+				}else{
+					//System.out.println("The universe is totally insane!!!");
+				}
+			}else{
+				plotPoints.add(star1.starBrightness+star2.starBrightness);
+				//System.out.println("What??");
+			}
+		}
+		System.out.println(currentAngle);
+	}
+	
 	public static void generateGraph(){
 		XYSeries series = new XYSeries("XYGrapsh");
 		for(int graphCounter=0; graphCounter<plotPoints.size(); graphCounter++){
@@ -70,7 +120,8 @@ public class LightCurveGenerator {
 		        System.err.println("Error: Check save location");
 		        return;
 		    }
-		}
+	}
+	
 	public static double eclipse(int starInFront){
 		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system
 		 * and the front star's center is exactly star1 radius + star2 radius away from the back star
@@ -96,7 +147,6 @@ public class LightCurveGenerator {
 				}
 			}
 		}
-		
 		if(starInFront == 1){
 			//if star 1 is in front
 			for(int ringCounter=0; ringCounter<star2.rings; ringCounter++){
@@ -112,4 +162,23 @@ public class LightCurveGenerator {
 		return systemBrightness;
 	}
 	
+	public static void initOrbit(double eccentricity, double distanceIn){
+		//Assigning stars' orbital properties
+		totalMass = star1.mass+star2.mass;
+		distance = distanceIn*1.495978707*Math.pow(10, 11); //AU
+		star1.apoapsis = distance*star2.mass/(totalMass);
+		star2.apoapsis = distance-star1.apoapsis;
+		star1.eccentricity = eccentricity;
+		star2.eccentricity = eccentricity;
+		star1.semiMajorAxis = star1.apoapsis/(1+star1.eccentricity);
+		star2.semiMajorAxis = star2.apoapsis/(1+star2.eccentricity);
+		star1.semiMinorAxis = star1.semiMajorAxis*Math.sqrt(1-Math.pow(star1.eccentricity, 2));
+		star2.semiMinorAxis = star2.semiMajorAxis*Math.sqrt(1-Math.pow(star2.eccentricity, 2));
+		star1.focus = Math.sqrt(Math.pow(star1.semiMajorAxis, 2)-Math.pow(star1.semiMinorAxis, 2));
+		star2.focus = Math.sqrt(Math.pow(star2.semiMajorAxis, 2)-Math.pow(star2.semiMinorAxis, 2));
+		star1.periapsis = star1.semiMajorAxis*(1-star1.eccentricity);
+		star2.periapsis = star2.semiMajorAxis*(1-star2.eccentricity);
+		star1.period = 2*Math.PI*Math.sqrt((Math.pow(star1.semiMajorAxis+star2.semiMajorAxis, 3)/(G*totalMass)));
+		star2.period = star1.period;
+	}
 }
