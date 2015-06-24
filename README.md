@@ -1,7 +1,7 @@
 # EclipsingBinariesLightCurveGenerator
 
 #Description
-NOTE: This decription is currently obsolote as the program is under reconstruction. 
+A new version from the old program: https://github.com/FunkyNoodles/EclipsingBinariesProgram/releases
 The new calculation will use spherical coordinates rather than cartesian coordinates to divide the spheres, 
 which is easier and slightly more accurate than "slices and polygons" before. The eclipse algorithms is more efficient this time since it is set in a coordinate system.
 Instead of dividing a sphere into slices and slices into polygons, this updated program will divide the hemisphere (seen in two dimensions) to rings and sectors. This is easier because each ring will have the same magnitude of brightness, and outer rings will be dimmer (limb-darkening effect).
