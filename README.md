@@ -1,5 +1,21 @@
 # EclipsingBinariesLightCurveGenerator
 
+#Description
+NOTE: This decription is currently obsolote as the program is under reconstruction. 
+The new calculation will use spherical coordinates rather than cartesian coordinates to divide the spheres, 
+which is easier and slightly more accurate than "slices and polygons" before. The eclipse algorithms is more efficient this time since it is set in a coordinate system.
+Instead of dividing a sphere into slices and slices into polygons, this updated program will divide the hemisphere (seen in two dimensions) to rings and sectors. This is easier because each ring will have the same magnitude of brightness, and outer rings will be dimmer (limb-darkening effect).
+
+When one star is in front of another, the program will determine if each polar sector of the covered star is behind the front star, if so, the brightness value of that specific sector is subtracted from the entire brightness.
+
+This program will also work for elliptical orbits, and hopefully feature perspectives from various angles.
+
+Some goals:
+
+	Work out the light curve for elliptic orbits.
+	Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross.
+	Update GUI from swing to JavaFX.
+
 #Authors
 
 (Originally coded at COSMOS UCSC 2014)
@@ -9,43 +25,6 @@ Original Java Code by Louis Lu (nickasds@hotmail.com)
 Debug and Revised by Andrew Zhang (andrewmzhang12345@gmail.com)
 
 Maintained by Louis Lu and Andrew Zhang.
-
-#Description
-NOTE: This decription is currently obsolote as the program is under reconstruction. 
-The new calculation will use spherical coordinates rather than cartesian coordinates to divide the spheres, 
-which is easier and slightly more accurate than "slices and polygons" before. The eclipse algorithms is more efficient this time since it is set in a coordinate system.
-
-Some goals:
-
-	Work out the light curve for elliptic orbits.
-	Work out the light curve from tilted perspective, that is, the centers of the stars do not necessarily cross.
-	Update GUI from swing to JavaFX.
-
-
-
-###This is obsolete
-This code, when run, allows one to generate a light curve of a binary star.
-Cicular eclipses are assumed, time is in period phases. Temperature input
-is in kelvins, radius is arbitrary (units can be whatever you want it to be).
-
-This light curve simulator is better than a lot of those found on the internet,
-as this one takes into account a phenomena called the 'Limb Darkening Effect'. The
-Limb Darkening Effect is an optical effect seen in stars, that causes the center
-part of the disk (imagine a star being a circle) appears brighter than its edge
-or limb. When an eclipsing binary light curve simulator does not take into account
-limb darkening effect, their graphs will not be accurate, especially when the 
-two stars vary greatly in size (radius wise). Try using (4000,3000,3000,4000) as a
-set of inputs, respectively. Notice how in the light curve there is a curved dip
-and a flat-bottomed dip. This is limb darkening effect kicking in. Some other online
-simulators will not generate this effect. 
-
-This simulator does not take in other variables that affect binary stars. First
-of all, the orbits are assumed to be circular, and spaces such that each dip will
-be 1/4th of the total period. Again, the point of this simulator was to visually 
-illustrate binary light curves, not to be the ultimate binary eclipse simulator. 
-
- Be sure to choose a valid folder location using 'Browse', or the graph will
- not generate. (Default location is C:/). 
  
 #Acknowlegements
 Eclipsing Binaries Group:
