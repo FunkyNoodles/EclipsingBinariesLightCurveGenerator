@@ -13,15 +13,15 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 public class LightCurveGenerator {
 	
-	public static Star star1 = new Star(1000, 1000, 1.1, 5000.0, 5790); //for Alpha Centauri A
-	public static Star star2 = new Star(1000, 1000, 0.907, 6000.0, 5260); //for Alpha Centauri B
+	public static Star star1 = new Star(1000, 1000, 3.59, 4.13, 9200); //for Algol A
+	public static Star star2 = new Star(1000, 1000, 0.79, 3.0, 4500); //for Algol B
 	
 	//for eclipse
 	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
 	static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
 	static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
 	
-	static double timeSlice = 10000; //will be customizable
+	static double timeSlice = 1000; //will be customizable
 	static double timeIncrement = 0;
 	
 	//ArrayLists
@@ -39,7 +39,7 @@ public class LightCurveGenerator {
 	private final static double G = 6.671*Math.pow(10, -11);
 	
 	public static void main(String[] args){
-		initOrbit(0.52, 36);
+		initOrbit(0.40, 0.062);
 		//go.init(args);
 		//The content of main class is temporary for testing is also temporary
 		/*star2.x = star1.radius+star2.radius;
@@ -62,64 +62,42 @@ public class LightCurveGenerator {
 		timeIncrement = star1.period/timeSlice;
 		double currentAngle = 0;
 		while(currentAngle <= 2*Math.PI){
-			if(Math.abs(currentAngle) < 0.001){
-				timeIncrement = timeIncrement/1;
+			/*if(Math.abs(currentAngle) < 0.01 || Math.abs(currentAngle-Math.PI/2) < 0.01){
+				timeIncrement = star1.period/timeSlice/2;
 			}else{
 				timeIncrement = star1.period/timeSlice;
-			}
+			}*/
 			//for star1, theta=0 points towards center, so use negative for ellipse in polar coordinates
 			star1.currentRadius = star1.semiMajorAxis*(1-Math.pow(star1.eccentricity, 2))/(1-star1.eccentricity*Math.cos(currentAngle));
-			star2.currentRadius = star2.semiMajorAxis*(1-Math.pow(star2.eccentricity, 2))/(1-star2.eccentricity*Math.cos(currentAngle));
+			star2.currentRadius = star2.semiMajorAxis*(1-Math.pow(star2.eccentricity, 2))/(1+star2.eccentricity*Math.cos(currentAngle));
 			star1.yPerspective = star1.currentRadius*Math.cos(currentAngle);
-			star2.yPerspective = star2.currentRadius*Math.cos(currentAngle+Math.PI/2);
+			star2.yPerspective = star2.currentRadius*Math.cos(currentAngle+Math.PI);
 			star1.xPerspective = star1.currentRadius*Math.sin(currentAngle);
-			star2.xPerspective = star2.currentRadius*Math.sin(currentAngle+Math.PI/2);
+			star2.xPerspective = star2.currentRadius*Math.sin(currentAngle+Math.PI);
 			currentAngle += 2*Math.PI*star1.semiMajorAxis*star1.semiMinorAxis*timeIncrement/star1.period/Math.pow(star1.currentRadius, 2);
 			//System.out.println(star1.currentRadius +"\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
 			//System.out.println(currentAngle);
+			//System.out.println(plotPoints.size()+"\t" + star1.currentRadius + "\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
 			if(Math.abs(star1.yPerspective)+Math.abs(star2.yPerspective)<star1.radius+star2.radius){
 				if(star1.xPerspective > star2.xPerspective){
 					plotPoints.add(eclipse(1));
-					//System.out.println(star1.yPerspective + "\t" + star2.yPerspective);
+					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
+					System.out.println(plotPoints.size()+"\t1 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
 				}else if(star1.xPerspective < star2.xPerspective){
 					plotPoints.add(eclipse(2));
-					//System.out.println(star1.yPerspective + "\t" + star2.yPerspective);
+					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
+					System.out.println(plotPoints.size()+"\t2 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
 				}else{
 					//System.out.println("The universe is totally insane!!!");
 				}
 			}else{
 				plotPoints.add(star1.starBrightness+star2.starBrightness);
-				//System.out.println("What??");
+				//System.out.println("Well");
 			}
+			//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
+			//System.out.println(currentAngle);
 		}
-		System.out.println(currentAngle);
-	}
-	
-	public static void generateGraph(){
-		XYSeries series = new XYSeries("XYGrapsh");
-		for(int graphCounter=0; graphCounter<plotPoints.size(); graphCounter++){
-			series.add(graphCounter, plotPoints.get(graphCounter));
-		}
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(series);
-		JFreeChart chart = ChartFactory.createXYLineChart(
-                "Luminous Intensity vs. Phase", // Title
-                "Phase", // x-axis Label
-                "Luminous Intensity", // y-axis Label
-                dataset, // Dataset
-                PlotOrientation.VERTICAL, // Plot Orientation
-                true, // Show Legend
-                true, // Use tooltips
-                false // Configure chart to generate URLs?
-        );
-		try {
-		        System.out.println("Creating Graph...");
-		        //Create the chart
-		        ChartUtilities.saveChartAsJPEG(new File("D:\\test.jpg"), chart, 1280, 720);
-		    } catch (IOException e) {
-		        System.err.println("Error: Check save location");
-		        return;
-		    }
+		//System.out.println(star1.radius + " "+(star1.dr*star1.rings));
 	}
 	
 	public static double eclipse(int starInFront){
@@ -141,6 +119,8 @@ public class LightCurveGenerator {
 				for(int sectorCounter=0; sectorCounter<star1.sectors; sectorCounter++){
 					star1.xSector = ringCounter*star1.dr*Math.cos(sectorCounter*star1.dth);
 					star1.ySector = ringCounter*star1.dr*Math.sin(sectorCounter*star1.dth);
+					star2.x = Math.abs(star2.yPerspective)+Math.abs(star1.yPerspective);
+					//star2.y = star2.xPerspective;
 					if(Math.sqrt(Math.pow(star1.xSector-star2.x,2)+Math.pow(star1.ySector-star2.y, 2)) < star2.radius){
 						systemBrightness -=star1.component[ringCounter][sectorCounter];
 					}
@@ -153,6 +133,8 @@ public class LightCurveGenerator {
 				for(int sectorCounter=0; sectorCounter<star2.sectors; sectorCounter++){
 					star2.xSector = ringCounter*star2.dr*Math.cos(sectorCounter*star2.dth);
 					star2.ySector = ringCounter*star2.dr*Math.sin(sectorCounter*star2.dth);
+					star1.x = Math.abs(star2.yPerspective)+Math.abs(star1.yPerspective);
+					//star1.y = star1.xPerspective;
 					if(Math.sqrt(Math.pow(star2.xSector-star1.x,2)+Math.pow(star2.ySector-star1.y, 2)) < star1.radius){
 						systemBrightness -=star2.component[ringCounter][sectorCounter];
 					}
@@ -180,5 +162,31 @@ public class LightCurveGenerator {
 		star2.periapsis = star2.semiMajorAxis*(1-star2.eccentricity);
 		star1.period = 2*Math.PI*Math.sqrt((Math.pow(star1.semiMajorAxis+star2.semiMajorAxis, 3)/(G*totalMass)));
 		star2.period = star1.period;
+	}
+	public static void generateGraph(){
+		XYSeries series = new XYSeries("XYGrapsh");
+		for(int graphCounter=0; graphCounter<plotPoints.size(); graphCounter++){
+			series.add(graphCounter, plotPoints.get(graphCounter));
+		}
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(series);
+		JFreeChart chart = ChartFactory.createXYLineChart(
+                "Luminous Intensity vs. Phase", // Title
+                "Phase", // x-axis Label
+                "Luminous Intensity", // y-axis Label
+                dataset, // Dataset
+                PlotOrientation.VERTICAL, // Plot Orientation
+                true, // Show Legend
+                true, // Use tooltips
+                false // Configure chart to generate URLs?
+        );
+		try {
+		        System.out.println("Creating Graph...");
+		        //Create the chart
+		        ChartUtilities.saveChartAsJPEG(new File("D:\\test1.jpg"), chart, 1280, 720);
+		    } catch (IOException e) {
+		        System.err.println("Error: Check save location");
+		        return;
+		    }
 	}
 }
