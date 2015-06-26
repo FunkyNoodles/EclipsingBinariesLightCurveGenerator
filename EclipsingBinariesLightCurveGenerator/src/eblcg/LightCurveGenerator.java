@@ -17,11 +17,11 @@ public class LightCurveGenerator {
 	public static Star star2 = new Star(1000, 1000, 0.79, 3.0, 4500); //for Algol B
 	
 	//for eclipse
-	static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
-	static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
-	static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
+	//static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
+	//static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
+	//static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
 	
-	static double timeSlice = 1000; //will be customizable
+	static double timeIntervel = 1000; //will be customizable
 	static double timeIncrement = 0;
 	
 	//ArrayLists
@@ -39,8 +39,8 @@ public class LightCurveGenerator {
 	private final static double G = 6.671*Math.pow(10, -11);
 	
 	public static void main(String[] args){
-		initOrbit(0.40, 0.062);
-		//go.init(args);
+		
+		go.init(args);
 		//The content of main class is temporary for testing is also temporary
 		/*star2.x = star1.radius+star2.radius;
 		for(int distanceTravelled1=0; distanceTravelled1<distanceToTravel/step1; distanceTravelled1++){
@@ -54,18 +54,20 @@ public class LightCurveGenerator {
 			//System.out.println(eclipse(1));
 			plotPoints.add(eclipse(1));
 		}*/
-		progress();
-		generateGraph();
+		
+		//initOrbit(0.85, 0.062);
+		//progress();
+		//generateGraph();
 	}
 	
 	public static void progress(){
-		timeIncrement = star1.period/timeSlice;
+		timeIncrement = star1.period/timeIntervel;
 		double currentAngle = 0;
 		while(currentAngle <= 2*Math.PI){
 			/*if(Math.abs(currentAngle) < 0.01 || Math.abs(currentAngle-Math.PI/2) < 0.01){
-				timeIncrement = star1.period/timeSlice/2;
+				timeIncrement = star1.period/timeIntervel/2;
 			}else{
-				timeIncrement = star1.period/timeSlice;
+				timeIncrement = star1.period/timeIntervel;
 			}*/
 			//for star1, theta=0 points towards center, so use negative for ellipse in polar coordinates
 			star1.currentRadius = star1.semiMajorAxis*(1-Math.pow(star1.eccentricity, 2))/(1-star1.eccentricity*Math.cos(currentAngle));
@@ -75,18 +77,18 @@ public class LightCurveGenerator {
 			star1.xPerspective = star1.currentRadius*Math.sin(currentAngle);
 			star2.xPerspective = star2.currentRadius*Math.sin(currentAngle+Math.PI);
 			currentAngle += 2*Math.PI*star1.semiMajorAxis*star1.semiMinorAxis*timeIncrement/star1.period/Math.pow(star1.currentRadius, 2);
-			//System.out.println(star1.currentRadius +"\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
+			System.out.println(star1.currentRadius +"\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
 			//System.out.println(currentAngle);
 			//System.out.println(plotPoints.size()+"\t" + star1.currentRadius + "\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
 			if(Math.abs(star1.yPerspective)+Math.abs(star2.yPerspective)<star1.radius+star2.radius){
 				if(star1.xPerspective > star2.xPerspective){
 					plotPoints.add(eclipse(1));
 					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
-					System.out.println(plotPoints.size()+"\t1 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
+					//System.out.println(plotPoints.size()+"\t1 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
 				}else if(star1.xPerspective < star2.xPerspective){
 					plotPoints.add(eclipse(2));
 					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
-					System.out.println(plotPoints.size()+"\t2 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
+					//System.out.println(plotPoints.size()+"\t2 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
 				}else{
 					//System.out.println("The universe is totally insane!!!");
 				}

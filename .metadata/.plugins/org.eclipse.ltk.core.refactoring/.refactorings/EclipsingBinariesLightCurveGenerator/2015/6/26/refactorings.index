@@ -1,1 +1,7 @@
 1435043983455	Delete element
+1435211226664	Rename field 'timeSlice'
+1435275916119	Rename local variable 'inputGrid'
+1435276344349	Rename local variable 'star1Title'
+1435276361387	Rename local variable 'star1MassTitle'
+1435277927377	Rename local variable 'btn'
+1435278103672	Rename local variable 'root'

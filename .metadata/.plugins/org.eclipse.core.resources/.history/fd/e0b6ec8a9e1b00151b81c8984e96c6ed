@@ -1,0 +1,126 @@
+package eblcg;
+
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.input.ContextMenuEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
+
+public class GUI extends Application{
+
+	@Override
+	public void start(Stage primaryStage) throws Exception {
+		primaryStage.setTitle("Eclipsing Binaries Light Curve Generator");
+		
+		//Declarations
+		StackPane rootMain = new StackPane();
+		GridPane controlPane = new GridPane();
+		Text inputTitle = new Text("Input");
+		Label presetsLabel = new Label("Presets: ");
+		ChoiceBox<String> presetsChoiceBox = new ChoiceBox<String>();
+		Text star1Title = new Text("Star 1: ");
+		Label star1MassLabel = new Label("Star 1 Mass (Solar Mass): ");
+		TextField star1MassText = new TextField();
+		Label star1RadiusLabel = new Label("Star 1 Radius (Solar Radius): ");
+		TextField star1RadiusText = new TextField();
+		Label star1TempLabel = new Label("Star 1 Temperature (K): ");
+		TextField star1TempText = new TextField();
+		
+		Text star2Title = new Text("Star 2: ");
+		Label star2MassLabel = new Label("Star 2 Mass (Solar Mass): ");
+		TextField star2MassText = new TextField();
+		Label star2RadiusLabel = new Label("Star 2 Radius (Solar Radius): ");
+		TextField star2RadiusText = new TextField();
+		Label star2TempLabel = new Label("Star 2 Temperature (K): ");
+		TextField star2TempText = new TextField();
+		
+		Label orbitLabel = new Label("Orbit: ");
+		Label eccentricityLabel = new Label("Eccentricity: ");
+		TextField eccentricityText = new TextField();
+		Label maxSeparationLabel = new Label("Max Separation Distance (AU): ");
+		TextField maxSparationText = new TextField();
+		
+		Button advancedBtn = new Button();
+		Text advancedTitle = new Text("Advanced Settings");
+		
+		
+		//Initializations
+		controlPane.setAlignment(Pos.CENTER_LEFT);
+		controlPane.setHgap(3);
+		controlPane.setVgap(3);
+		controlPane.setPadding(new Insets(25,25,25,25));
+		
+		inputTitle.setFont(Font.font(44));
+		presetsChoiceBox.getItems().addAll(
+				"Custom",
+				"Algol AB"
+				);
+		presetsChoiceBox.setValue("Custom");
+		presetsChoiceBox.setOnContextMenuRequested(new EventHandler< ContextMenuEvent>(){
+			@Override
+			public void handle(ContextMenuEvent event){
+				star1MassText.setText(presetsChoiceBox.getValue());
+			}
+		});
+		advancedTitle.setFont(Font.font(36));
+		
+		advancedBtn.setText("Advanced Settings...");
+		advancedBtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+		        StackPane advancedRoot = new StackPane();
+		        advancedRoot.getChildren().add(advancedTitle);
+		        Stage advancedStage = new Stage();
+		        advancedStage.setTitle("Advanced Settings");
+		        advancedStage.setScene(new Scene(advancedRoot,450,450));
+		        advancedStage.show();
+		    }
+		});
+		//Setup
+		rootMain.getChildren().add(controlPane);
+		controlPane.add(inputTitle,0,0);
+		controlPane.add(presetsLabel, 0, 1);
+		controlPane.add(presetsChoiceBox,0,2);
+		controlPane.add(star1Title,0,3);
+		controlPane.add(star1MassLabel,0,4);
+		controlPane.add(star1MassText,0,5);
+		controlPane.add(star1RadiusLabel,0,6);
+		controlPane.add(star1RadiusText,0,7);
+		controlPane.add(star1TempLabel,0,8);
+		controlPane.add(star1TempText,0,9);
+		controlPane.add(star2Title,0,10);
+		controlPane.add(star2MassLabel,0,11);
+		controlPane.add(star2MassText,0,12);
+		controlPane.add(star2RadiusLabel,0,13);
+		controlPane.add(star2RadiusText,0,14);
+		controlPane.add(star2TempLabel,0,15);
+		controlPane.add(star2TempText,0,16);
+		controlPane.add(orbitLabel, 0, 17);
+		controlPane.add(eccentricityLabel, 0, 18);
+		controlPane.add(eccentricityText, 0, 19);
+		controlPane.add(maxSeparationLabel, 0, 20);
+		controlPane.add(maxSparationText, 0, 21);
+		
+		controlPane.add(advancedBtn,0,22);
+		
+
+		primaryStage.setScene(new Scene(rootMain, 1280, 720));
+		primaryStage.show();
+	}
+	
+	public void init(String[] args){
+		launch(args);
+	}
+}
