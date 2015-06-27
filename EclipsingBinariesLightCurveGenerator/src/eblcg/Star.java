@@ -6,15 +6,17 @@ package eblcg;
 //polar coordinates this time (r, theta)
 public class Star {
 	//Star properties
-	int rings = 0; //number of rings to divide into, will be initialized
+	int rings = 1000; //number of rings to divide into, default is 1000
 	double dr = 0;
-	int sectors = 0; //number of sectors to divide into, will be initialized
+	int sectors = 1000; //number of sectors to divide into, default is 1000
 	double dth = 0; //d-theta
+	double radiusInput = 0; //in solar radius
 	double radius = 0; //in meters
 	double temperature = 0;
 	double starDirectBrightness = 0; //the hemisphere brightness crudely obtained from Stefan-Boltzmann Law
 	double starBrightness = 0; //The brightness after integration (limb-darkening effect)
 	double area = 0;
+	double massInput = 0; //in solar mass
 	double mass = 0; //in kg
 	
 	double component[][];
@@ -49,24 +51,16 @@ public class Star {
 	long totalCounter = 0;
 	double percentage = 0;
 	
-	public Star(int rings, int sectors, double mass, double radius, double temperature){
-		this.rings = rings;
-		this.sectors = sectors;
-		this.radius = radius*6.955*Math.pow(10, 8);
-		this.temperature = temperature;
-		this.mass = mass*1.9891*Math.pow(10, 30);
-		
-		totalCounter = 2*rings*sectors;
-		//System.out.println(totalCounter);
-		
-		initStar();
+	public Star(){
 	}
 	
 	public void initStar(){
 		component = new double[rings][sectors];
+		//Manipulate the values
+		mass = massInput*1.9891*Math.pow(10, 30); //convert from solar mass
+		radius = radiusInput*6.955*Math.pow(10, 8); //convert from solar radius
 		dr = radius/rings;
 		dth = 2*Math.PI/sectors;
-		//System.out.println(dth + "\t" + dr);
 		area = radius*radius*Math.PI;
 		//Stefan-Boltzmann law and dived by two because only seeing half of the star
 		starDirectBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2; 

@@ -1,0 +1,17 @@
+package eblcg;
+
+public class thread1 implements Runnable {
+	private Thread t;
+	public thread1(){
+	}
+	@Override
+	public void run() {
+		LightCurveGenerator.calc();
+	}
+	public void start(){
+		if(t == null){
+			t = new Thread(this, "Thread1");
+			t.start();
+		}
+	}
+}
