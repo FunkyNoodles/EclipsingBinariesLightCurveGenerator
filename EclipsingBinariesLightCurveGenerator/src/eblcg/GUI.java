@@ -7,14 +7,17 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TabPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
@@ -23,12 +26,12 @@ public class GUI extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Eclipsing Binaries Light Curve Generator");
 		
-		//Declarations
-		StackPane rootMain = new StackPane();
-		GridPane controlPane = new GridPane();
+		//GUI Declarations
+		BorderPane rootMain = new BorderPane();
+		VBox controlPaneLeft = new VBox();
 		Text inputTitle = new Text("Input");
 		Label presetsLabel = new Label("Presets: ");
-		ChoiceBox<String> presetsChoiceBox = new ChoiceBox<String>();
+		ComboBox<String> presetsChoiceBox = new ComboBox<String>();
 		Text star1Title = new Text("Star 1: ");
 		Label star1MassLabel = new Label("Star 1 Mass (Solar Mass): ");
 		TextField star1MassText = new TextField();
@@ -51,70 +54,117 @@ public class GUI extends Application{
 		Label maxSeparationLabel = new Label("Max Separation Distance (AU): ");
 		TextField maxSparationText = new TextField();
 		
-		Button advancedBtn = new Button();
+		Button advancedBtn = new Button("Advanced Settings...");
 		Text advancedTitle = new Text("Advanced Settings");
+		VBox star1Settings = new VBox();
+		Label star1RingsLabel = new Label("Star 1 Rings: ");
+		TextField star1RingsText = new TextField();
+		Label star1SectorsLabel = new Label("Star 1 Sectors: ");
+		TextField star1SectorsText = new TextField();
+		VBox star2Settings = new VBox();
+		Label star2RingsLabel = new Label("Star 2 Rings: ");
+		TextField star2RingsText = new TextField();
+		Label star2SectorsLabel = new Label("Star 2 Sectors: ");
+		TextField star2SectorsText = new TextField();
+		Button advancedConfirmBtn = new Button("Confirm");
+		Button advancedCancelBtn = new Button("Cancel");
+		
+		TabPane graphPane = new TabPane();
+		
+		VBox controlPaneRight = new VBox();
+		Text controlsTitle = new Text("Controls");
+		Label imageDirLabel = new Label("Images Directory");
+		TextArea dirTextArea = new TextArea();
+		Button browseBtn = new Button("Browse...");
+		
 		
 		
 		//Initializations
-		controlPane.setAlignment(Pos.CENTER_LEFT);
-		controlPane.setHgap(3);
-		controlPane.setVgap(3);
-		controlPane.setPadding(new Insets(25,25,25,25));
 		
-		inputTitle.setFont(Font.font(44));
+		controlPaneLeft.setAlignment(Pos.CENTER_LEFT);
+		controlPaneLeft.setPadding(new Insets(10,25,10,25));
+		
+		inputTitle.setFont(Font.font(30));
 		presetsChoiceBox.getItems().addAll(
 				"Custom",
 				"Algol AB"
 				);
 		presetsChoiceBox.setValue("Custom");
-		presetsChoiceBox.setOnMouseClicked(new EventHandler<MouseEvent>(){
+		presetsChoiceBox.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
-			public void handle(MouseEvent event){
+			public void handle(ActionEvent event){
 				star1MassText.setText(presetsChoiceBox.getValue());
 			}
 		});
-		advancedTitle.setFont(Font.font(36));
+		advancedTitle.setFont(Font.font(30));
 		
-		advancedBtn.setText("Advanced Settings...");
 		advancedBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-		        StackPane advancedRoot = new StackPane();
-		        advancedRoot.getChildren().add(advancedTitle);
+		        GridPane advancedRoot = new GridPane();
+		        advancedRoot.setHgap(10);
+		        advancedRoot.setVgap(10);
+		        advancedRoot.setPadding(new Insets(10,10,10,10));
+		        advancedRoot.add(advancedTitle,0,0,2,1);
+		        advancedRoot.add(star1Settings,0,1,1,4);
+		        star1Settings.getChildren().add(star1RingsLabel);
+		        star1Settings.getChildren().add(star1RingsText);
+		        star1Settings.getChildren().add(star1SectorsLabel);
+		        star1Settings.getChildren().add(star1SectorsText);
+		        advancedRoot.add(star2Settings,1,1,1,4);
+		        star2Settings.getChildren().add(star2RingsLabel);
+		        star2Settings.getChildren().add(star2RingsText);
+		        star2Settings.getChildren().add(star2SectorsLabel);
+		        star2Settings.getChildren().add(star2SectorsText);
+		        advancedRoot.add(advancedConfirmBtn,0,5);
+		        advancedRoot.add(advancedCancelBtn,1,5);
 		        Stage advancedStage = new Stage();
 		        advancedStage.setTitle("Advanced Settings");
-		        advancedStage.setScene(new Scene(advancedRoot,450,450));
+		        advancedStage.setScene(new Scene(advancedRoot,400,210));
 		        advancedStage.show();
 		    }
 		});
+		
+		controlsTitle.setFont(Font.font(30));
+		
+		controlPaneRight.setAlignment(Pos.CENTER_RIGHT);
+		controlPaneRight.setPadding(new Insets(10,25,10,25));
+		dirTextArea.setEditable(false);
+		dirTextArea.setPrefSize(200, 100);
 		//Setup
-		rootMain.getChildren().add(controlPane);
-		controlPane.add(inputTitle,0,0);
-		controlPane.add(presetsLabel, 0, 1);
-		controlPane.add(presetsChoiceBox,0,2);
-		controlPane.add(star1Title,0,3);
-		controlPane.add(star1MassLabel,0,4);
-		controlPane.add(star1MassText,0,5);
-		controlPane.add(star1RadiusLabel,0,6);
-		controlPane.add(star1RadiusText,0,7);
-		controlPane.add(star1TempLabel,0,8);
-		controlPane.add(star1TempText,0,9);
-		controlPane.add(star2Title,0,10);
-		controlPane.add(star2MassLabel,0,11);
-		controlPane.add(star2MassText,0,12);
-		controlPane.add(star2RadiusLabel,0,13);
-		controlPane.add(star2RadiusText,0,14);
-		controlPane.add(star2TempLabel,0,15);
-		controlPane.add(star2TempText,0,16);
-		controlPane.add(orbitLabel, 0, 17);
-		controlPane.add(eccentricityLabel, 0, 18);
-		controlPane.add(eccentricityText, 0, 19);
-		controlPane.add(maxSeparationLabel, 0, 20);
-		controlPane.add(maxSparationText, 0, 21);
+		rootMain.setLeft(controlPaneLeft);
+		controlPaneLeft.getChildren().add(inputTitle);
+		controlPaneLeft.getChildren().add(presetsLabel);
+		controlPaneLeft.getChildren().add(presetsChoiceBox);
+		controlPaneLeft.getChildren().add(star1Title);
+		controlPaneLeft.getChildren().add(star1MassLabel);
+		controlPaneLeft.getChildren().add(star1MassText);
+		controlPaneLeft.getChildren().add(star1RadiusLabel);
+		controlPaneLeft.getChildren().add(star1RadiusText);
+		controlPaneLeft.getChildren().add(star1TempLabel);
+		controlPaneLeft.getChildren().add(star1TempText);
+		controlPaneLeft.getChildren().add(star2Title);
+		controlPaneLeft.getChildren().add(star2MassLabel);
+		controlPaneLeft.getChildren().add(star2MassText);
+		controlPaneLeft.getChildren().add(star2RadiusLabel);
+		controlPaneLeft.getChildren().add(star2RadiusText);
+		controlPaneLeft.getChildren().add(star2TempLabel);
+		controlPaneLeft.getChildren().add(star2TempText);
+		controlPaneLeft.getChildren().add(orbitLabel);
+		controlPaneLeft.getChildren().add(eccentricityLabel);
+		controlPaneLeft.getChildren().add(eccentricityText);
+		controlPaneLeft.getChildren().add(maxSeparationLabel);
+		controlPaneLeft.getChildren().add(maxSparationText);
 		
-		controlPane.add(advancedBtn,0,22);
+		controlPaneLeft.getChildren().add(advancedBtn);
 		
-
+		rootMain.setCenter(graphPane);
+		
+		rootMain.setRight(controlPaneRight);
+		controlPaneRight.getChildren().add(controlsTitle);
+		controlPaneRight.getChildren().add(imageDirLabel);
+		controlPaneRight.getChildren().add(dirTextArea);
+		controlPaneRight.getChildren().add(browseBtn);
 		primaryStage.setScene(new Scene(rootMain, 1280, 720));
 		primaryStage.show();
 	}
