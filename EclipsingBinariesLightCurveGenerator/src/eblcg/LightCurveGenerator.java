@@ -17,9 +17,6 @@ public class LightCurveGenerator {
 	public static Star star2 = new Star();
 	
 	//for eclipse
-	//static double distanceToTravel = 2*(star1.radius+star2.radius); // this is still temporary, only works if the centers cross
-	//static double step1 = distanceToTravel/((star1.rings+star1.sectors)/2); //distance step for star 1, regardless of direction
-	//static double step2 = distanceToTravel/((star2.rings+star2.sectors)/2); //distance step for star 2, regardless of direction
 	
 	static double timeIntervel = 1000; //will be customizable
 	static double timeIncrement = 0;
@@ -39,6 +36,9 @@ public class LightCurveGenerator {
 	static double systemEccentricity = 0;
 	static double separationDistance = 0;
 	
+	static int imgHeight = 1280;
+	static int imgWidth = 720;
+	
 	//ArrayLists
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
 	static ArrayList<Double> derivative = new ArrayList<Double>();
@@ -53,6 +53,9 @@ public class LightCurveGenerator {
 	//Constants
 	private final static double G = 6.671*Math.pow(10, -11);
 	
+	//Indirect Variables
+	static File imgDirMain;
+	
 	public static void main(String[] args){
 		
 		go.init(args);
@@ -61,7 +64,9 @@ public class LightCurveGenerator {
 		//generateGraph();
 	}
 	
-	public static void calc(){
+	public static void beginGraph(){
+		initOrbit(systemEccentricity, separationDistance);
+		progress();
 	}
 	
 	public static void progress(){
@@ -184,7 +189,7 @@ public class LightCurveGenerator {
 		try {
 		        System.out.println("Creating Graph...");
 		        //Create the chart
-		        ChartUtilities.saveChartAsJPEG(new File("D:\\test1.jpg"), chart, 1280, 720);
+		        ChartUtilities.saveChartAsJPEG(imgDirMain, chart, imgWidth, imgHeight);
 		    } catch (IOException e) {
 		        System.err.println("Error: Check save location");
 		        return;

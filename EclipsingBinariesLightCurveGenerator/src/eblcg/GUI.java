@@ -1,5 +1,7 @@
 package eblcg;
 
+import java.io.File;
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -19,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
@@ -69,6 +72,10 @@ public class GUI extends Application{
 		TextField star2RingsText = new TextField();
 		Label star2SectorsLabel = new Label("Star 2 Sectors: ");
 		TextField star2SectorsText = new TextField();
+		Label imgWidthLabel = new Label("Image Width: ");
+		TextField imgWidthText = new TextField();
+		Label imgHeightLabel = new Label("Image Height: ");
+		TextField imgHeightText = new TextField();
 		Button advancedConfirmBtn = new Button("Confirm");
 		Button advancedCancelBtn = new Button("Cancel");
 		
@@ -80,8 +87,13 @@ public class GUI extends Application{
 		TextArea dirTextArea = new TextArea();
 		Button browseBtn = new Button("Browse...");
 		Button generateGraphBtn = new Button("Generate Graph");
+		Label consoleLabel = new Label("Console: ");
+		TextArea consoleTextArea = new TextArea();
 		
 		GridPane advancedRoot = new GridPane();
+		
+		FileChooser dirChooser = new FileChooser();
+		
 		
 		Stage advancedStage = new Stage();
 		//Initialization & Setup
@@ -98,7 +110,16 @@ public class GUI extends Application{
 		presetsChoiceBox.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event){
-				star1MassText.setText(presetsChoiceBox.getValue());
+				if(presetsChoiceBox.getValue() == "Algol AB"){
+					star1MassText.setText("3.59");
+					star1RadiusText.setText("4.13");
+					star1TempText.setText("9200");
+					star2MassText.setText("0.79");
+					star2RadiusText.setText("3.0");
+					star2TempText.setText("4500");
+					eccentricityText.setText("0.0");
+					maxSeparationText.setText("0.062");
+				}
 			}
 		});
 		advancedTitle.setFont(Font.font(30));
@@ -122,6 +143,8 @@ public class GUI extends Application{
 		        			LightCurveGenerator.star1Sectors = Integer.parseInt(star1SectorsText.getText());
 		        			LightCurveGenerator.star2Rings = Integer.parseInt(star2RingsText.getText());
 		        			LightCurveGenerator.star2Sectors = Integer.parseInt(star2SectorsText.getText());
+		        			LightCurveGenerator.imgWidth = Integer.parseInt(imgWidthText.getText());
+		        			LightCurveGenerator.imgHeight = Integer.parseInt(imgHeightText.getText());
 		        			advancedStage.hide();
 		        		}catch(Exception e){
 		        			Alert advancedAlert = new Alert(AlertType.ERROR);
@@ -139,6 +162,8 @@ public class GUI extends Application{
 		controlPaneRight.setPadding(new Insets(10,25,10,25));
 		dirTextArea.setEditable(false);
 		dirTextArea.setPrefSize(200, 100);
+		consoleTextArea.setEditable(false);
+		consoleTextArea.setPrefSize(200, 100);
 		
 		advancedRoot.setHgap(10);
         advancedRoot.setVgap(10);
@@ -149,15 +174,21 @@ public class GUI extends Application{
         star1Settings.getChildren().add(star1RingsText);
         star1Settings.getChildren().add(star1SectorsLabel);
         star1Settings.getChildren().add(star1SectorsText);
+        star1Settings.getChildren().add(imgWidthLabel);
+        star1Settings.getChildren().add(imgWidthText);
+        imgWidthText.setText("1280");
         advancedRoot.add(star2Settings,1,1,1,4);
         star2Settings.getChildren().add(star2RingsLabel);
         star2Settings.getChildren().add(star2RingsText);
         star2Settings.getChildren().add(star2SectorsLabel);
         star2Settings.getChildren().add(star2SectorsText);
+        star2Settings.getChildren().add(imgHeightLabel);
+        star2Settings.getChildren().add(imgHeightText);
+        imgHeightText.setText("720");
         advancedRoot.add(advancedConfirmBtn,0,5);
         advancedRoot.add(advancedCancelBtn,1,5);
         advancedStage.setTitle("Advanced Settings");
-        advancedStage.setScene(new Scene(advancedRoot,400,210));
+        advancedStage.setScene(new Scene(advancedRoot,400,250));
         
         star1RingsText.setText("1000");
         star1SectorsText.setText("1000");
@@ -198,10 +229,37 @@ public class GUI extends Application{
 		controlPaneRight.getChildren().add(dirTextArea);
 		controlPaneRight.getChildren().add(browseBtn);
 		controlPaneRight.getChildren().add(generateGraphBtn);
+		controlPaneRight.getChildren().add(consoleLabel);
+		controlPaneRight.getChildren().add(consoleTextArea);
+		
+		dirChooser.setTitle("Choose a Directory");
+		dirChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+                new FileChooser.ExtensionFilter("PNG", "*.png"),
+				new FileChooser.ExtensionFilter("All Images", "*.*")
+            );
+		browseBtn.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent e){
+				File imgDir = dirChooser.showSaveDialog(primaryStage);
+				if(imgDir != null){
+					dirTextArea.setText(imgDir.toString());
+					LightCurveGenerator.imgDirMain = imgDir;
+					consoleTextArea.appendText("Set image save directory to " + imgDir.toString() + " ;\n");
+				}
+				
+			}
+		});
 		
 		generateGraphBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent e){
+				if(LightCurveGenerator.imgDirMain == null){
+					Alert dirVoidAlert = new Alert(AlertType.ERROR);
+					dirVoidAlert.setContentText("Please choose a directory to store light curve!\nClick the 'Browse' Button above to choose a directory.");
+					dirVoidAlert.showAndWait();
+					return;
+				}
 				try{
 					LightCurveGenerator.star1Mass = Double.parseDouble(star1MassText.getText());
 					LightCurveGenerator.star1Radius = Double.parseDouble(star1RadiusText.getText());
@@ -211,12 +269,13 @@ public class GUI extends Application{
 					LightCurveGenerator.star2Temp = Double.parseDouble(star2TempText.getText());
 					LightCurveGenerator.systemEccentricity = Double.parseDouble(eccentricityText.getText());
 					LightCurveGenerator.separationDistance = Double.parseDouble(maxSeparationText.getText());
-					LightCurveGenerator.calc();
 				}catch(Exception e1){
 					Alert generateGraphAlert = new Alert(AlertType.ERROR);
 					generateGraphAlert.setContentText("Please input valid values.");
 					generateGraphAlert.showAndWait();
+					return;
 				}
+				LightCurveGenerator.beginGraph();
 			}
 		});
 		primaryStage.setScene(new Scene(rootMain, 1280, 720));

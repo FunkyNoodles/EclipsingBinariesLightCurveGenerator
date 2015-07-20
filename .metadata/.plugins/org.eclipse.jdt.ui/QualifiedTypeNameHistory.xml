@@ -20,4 +20,5 @@
 <fullyQualifiedTypeName name="javafx.scene.shape.Rectangle"/>
 <fullyQualifiedTypeName name="javafx.scene.text.TextAlignment"/>
 <fullyQualifiedTypeName name="javafx.scene.text.Font"/>
+<fullyQualifiedTypeName name="javafx.scene.control.Alert.AlertType"/>
 </qualifiedTypeNameHistroy>
