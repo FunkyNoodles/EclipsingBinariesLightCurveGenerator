@@ -26,18 +26,13 @@ public class LightCurveGenerator {
 	static double star1Sectors = 0;
 	static double star2Rings = 0;
 	static double star2Sectors = 0;
-	
-	static double star1Mass = 0;
-	static double star1Radius = 0;
-	static double star1Temp = 0;
-	static double star2Mass = 0;
-	static double star2Radius = 0;
-	static double star2Temp = 0;
 	static double systemEccentricity = 0;
 	static double separationDistance = 0;
 	
-	static int imgHeight = 1280;
-	static int imgWidth = 720;
+	static int imgWidth = 1280;
+	static int imgHeight = 720;
+	
+	public static boolean isGenerating = false;
 	
 	//ArrayLists
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
@@ -65,8 +60,11 @@ public class LightCurveGenerator {
 	}
 	
 	public static void beginGraph(){
+		isGenerating = true;
 		initOrbit(systemEccentricity, separationDistance);
 		progress();
+		generateGraph();
+		isGenerating = false;
 	}
 	
 	public static void progress(){
@@ -151,6 +149,8 @@ public class LightCurveGenerator {
 	}
 	
 	public static void initOrbit(double eccentricity, double distanceIn){
+		star1.initStar();
+		star2.initStar();
 		//Assigning stars' orbital properties
 		totalMass = star1.mass+star2.mass;
 		distance = distanceIn*1.495978707*Math.pow(10, 11); //AU
@@ -195,4 +195,8 @@ public class LightCurveGenerator {
 		        return;
 		    }
 	}
+	
+	
+	
+	
 }

@@ -25,9 +25,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 public class GUI extends Application{
-	
-	
-
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Eclipsing Binaries Light Curve Generator");
@@ -138,19 +135,25 @@ public class GUI extends Application{
 		        advancedConfirmBtn.setOnAction(new EventHandler<ActionEvent>(){
 		        	@Override
 		        	public void handle(ActionEvent event){
-		        		try{
-		        			LightCurveGenerator.star1Rings = Integer.parseInt(star1RingsText.getText());
-		        			LightCurveGenerator.star1Sectors = Integer.parseInt(star1SectorsText.getText());
-		        			LightCurveGenerator.star2Rings = Integer.parseInt(star2RingsText.getText());
-		        			LightCurveGenerator.star2Sectors = Integer.parseInt(star2SectorsText.getText());
-		        			LightCurveGenerator.imgWidth = Integer.parseInt(imgWidthText.getText());
-		        			LightCurveGenerator.imgHeight = Integer.parseInt(imgHeightText.getText());
-		        			advancedStage.hide();
-		        		}catch(Exception e){
-		        			Alert advancedAlert = new Alert(AlertType.ERROR);
-		        			advancedAlert.setContentText("Please input valid integers.");
-		        			advancedAlert.showAndWait();
-		        		}	
+		        		if(!LightCurveGenerator.isGenerating){
+		        			try{
+			        			LightCurveGenerator.star1Rings = Integer.parseInt(star1RingsText.getText());
+			        			LightCurveGenerator.star1Sectors = Integer.parseInt(star1SectorsText.getText());
+			        			LightCurveGenerator.star2Rings = Integer.parseInt(star2RingsText.getText());
+			        			LightCurveGenerator.star2Sectors = Integer.parseInt(star2SectorsText.getText());
+			        			LightCurveGenerator.imgWidth = Integer.parseInt(imgWidthText.getText());
+			        			LightCurveGenerator.imgHeight = Integer.parseInt(imgHeightText.getText());
+			        			advancedStage.hide();
+			        		}catch(Exception e){
+			        			Alert advancedAlert = new Alert(AlertType.ERROR);
+			        			advancedAlert.setContentText("Please input valid integers.");
+			        			advancedAlert.showAndWait();
+			        		}
+							consoleTextArea.appendText("Setting changes confirmed.\n");
+						}else{
+							consoleTextArea.appendText("Please wait, generation is in progress.\n");
+						}
+		        			
 		        	}
 		        });
 		    }
@@ -261,12 +264,12 @@ public class GUI extends Application{
 					return;
 				}
 				try{
-					LightCurveGenerator.star1Mass = Double.parseDouble(star1MassText.getText());
-					LightCurveGenerator.star1Radius = Double.parseDouble(star1RadiusText.getText());
-					LightCurveGenerator.star1Temp = Double.parseDouble(star1TempText.getText());
-					LightCurveGenerator.star2Mass = Double.parseDouble(star2MassText.getText());
-					LightCurveGenerator.star2Radius = Double.parseDouble(star2RadiusText.getText());
-					LightCurveGenerator.star2Temp = Double.parseDouble(star2TempText.getText());
+					LightCurveGenerator.star1.massInput = Double.parseDouble(star1MassText.getText());
+					LightCurveGenerator.star1.radiusInput = Double.parseDouble(star1RadiusText.getText());
+					LightCurveGenerator.star1.temperature = Double.parseDouble(star1TempText.getText());
+					LightCurveGenerator.star2.massInput = Double.parseDouble(star2MassText.getText());
+					LightCurveGenerator.star2.radiusInput = Double.parseDouble(star2RadiusText.getText());
+					LightCurveGenerator.star2.temperature = Double.parseDouble(star2TempText.getText());
 					LightCurveGenerator.systemEccentricity = Double.parseDouble(eccentricityText.getText());
 					LightCurveGenerator.separationDistance = Double.parseDouble(maxSeparationText.getText());
 				}catch(Exception e1){
@@ -275,7 +278,12 @@ public class GUI extends Application{
 					generateGraphAlert.showAndWait();
 					return;
 				}
-				LightCurveGenerator.beginGraph();
+				if(!LightCurveGenerator.isGenerating){
+					beginThread();
+					consoleTextArea.appendText("Generating...\n");
+				}else{
+					consoleTextArea.appendText("Please wait, generation is in progress.\n");
+				}	
 			}
 		});
 		primaryStage.setScene(new Scene(rootMain, 1280, 720));
@@ -284,5 +292,31 @@ public class GUI extends Application{
 	
 	public void init(String[] args){
 		launch(args);
+	}
+	
+	public void beginThread(){
+		//this method gets called from the GUI class and starts a new thread to handle hard work
+		thread1 t1 = new thread1();
+		t1.start();
+	}
+	
+	public class thread1 implements Runnable{
+		//thread class
+		private Thread t;
+		
+		public thread1(){
+			
+		}
+		
+		public void run(){
+			LightCurveGenerator.beginGraph();
+		}
+		
+		public void start(){
+			if(t == null){
+				t = new Thread(this, "Thread 1");
+				t.start();
+			}
+		}
 	}
 }
