@@ -12,15 +12,15 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 
 public class LightCurveGenerator {
-	
+
 	public static Star star1 = new Star();
 	public static Star star2 = new Star();
-	
+
 	//for eclipse
-	
+
 	static double timeIntervel = 1000; //will be customizable
 	static double timeIncrement = 0;
-	
+
 	//Variables
 	static double star1Rings = 0;
 	static double star1Sectors = 0;
@@ -28,37 +28,35 @@ public class LightCurveGenerator {
 	static double star2Sectors = 0;
 	static double systemEccentricity = 0;
 	static double separationDistance = 0;
-	
+
 	static int imgWidth = 1280;
 	static int imgHeight = 720;
-	
+
 	public static boolean isGenerating = false;
-	
+	public static volatile boolean graphCreating = false;
+	public static volatile boolean graphCreated = false;
+
 	//ArrayLists
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
 	static ArrayList<Double> derivative = new ArrayList<Double>();
-	
+
 	//GUI
 	static GUI go = new GUI();
-	
+
 	//Orbit
 	static double totalMass = 0;
 	static double distance = 0;
-	
+
 	//Constants
 	private final static double G = 6.671*Math.pow(10, -11);
-	
+
 	//Indirect Variables
 	static File imgDirMain;
-	
+
 	public static void main(String[] args){
-		
 		go.init(args);
-		//initOrbit(0.85, 0.062);
-		//progress();
-		//generateGraph();
 	}
-	
+
 	public static void beginGraph(){
 		isGenerating = true;
 		initOrbit(systemEccentricity, separationDistance);
@@ -66,7 +64,7 @@ public class LightCurveGenerator {
 		generateGraph();
 		isGenerating = false;
 	}
-	
+
 	public static void progress(){
 		timeIncrement = star1.period/timeIntervel;
 		double currentAngle = 0;
@@ -80,30 +78,18 @@ public class LightCurveGenerator {
 			star2.xPerspective = star2.currentRadius*Math.sin(currentAngle+Math.PI);
 			currentAngle += 2*Math.PI*star1.semiMajorAxis*star1.semiMinorAxis*timeIncrement/star1.period/Math.pow(star1.currentRadius, 2);
 			System.out.println(star1.currentRadius +"\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
-			//System.out.println(currentAngle);
-			//System.out.println(plotPoints.size()+"\t" + star1.currentRadius + "\t" + star2.currentRadius + "\t" + star1.yPerspective + "\t" + star2.yPerspective);
 			if(Math.abs(star1.yPerspective)+Math.abs(star2.yPerspective)<star1.radius+star2.radius){
 				if(star1.xPerspective > star2.xPerspective){
 					plotPoints.add(eclipse(1));
-					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
-					//System.out.println(plotPoints.size()+"\t1 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
 				}else if(star1.xPerspective < star2.xPerspective){
 					plotPoints.add(eclipse(2));
-					//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
-					//System.out.println(plotPoints.size()+"\t2 is in front\t" + star1.yPerspective + "\t" + star2.yPerspective);
-				}else{
-					//System.out.println("The universe is totally insane!!!");
 				}
 			}else{
 				plotPoints.add(star1.starBrightness+star2.starBrightness);
-				//System.out.println("Well");
 			}
-			//System.out.println(plotPoints.size() + "\t" + plotPoints.get(plotPoints.size()-1));
-			//System.out.println(currentAngle);
 		}
-		//System.out.println(star1.radius + " "+(star1.dr*star1.rings));
 	}
-	
+
 	public static double eclipse(int starInFront){
 		/*At this time, the back star's center is set as the origin in a Cartesian coordinate system
 		 * and the front star's center is exactly star1 radius + star2 radius away from the back star
@@ -113,7 +99,7 @@ public class LightCurveGenerator {
 		/*
 		 * the calculation is significantly easier than the previous "slice and polygon" method,
 		 * for each sector's position (x,y) if the distance between (x,y) and front star's center is smaller
-		 * than front star's radius, then that specific sector is covered and its brightness is subtracted from 
+		 * than front star's radius, then that specific sector is covered and its brightness is subtracted from
 		 * the system brightness.
 		 */
 		double systemBrightness = star1.starBrightness + star2.starBrightness;
@@ -124,7 +110,6 @@ public class LightCurveGenerator {
 					star1.xSector = ringCounter*star1.dr*Math.cos(sectorCounter*star1.dth);
 					star1.ySector = ringCounter*star1.dr*Math.sin(sectorCounter*star1.dth);
 					star2.x = Math.abs(star2.yPerspective)+Math.abs(star1.yPerspective);
-					//star2.y = star2.xPerspective;
 					if(Math.sqrt(Math.pow(star1.xSector-star2.x,2)+Math.pow(star1.ySector-star2.y, 2)) < star2.radius){
 						systemBrightness -=star1.component[ringCounter][sectorCounter];
 					}
@@ -147,7 +132,7 @@ public class LightCurveGenerator {
 		}
 		return systemBrightness;
 	}
-	
+
 	public static void initOrbit(double eccentricity, double distanceIn){
 		star1.initStar();
 		star2.initStar();
@@ -187,16 +172,15 @@ public class LightCurveGenerator {
                 false // Configure chart to generate URLs?
         );
 		try {
-		        System.out.println("Creating Graph...");
-		        //Create the chart
-		        ChartUtilities.saveChartAsJPEG(imgDirMain, chart, imgWidth, imgHeight);
-		    } catch (IOException e) {
-		        System.err.println("Error: Check save location");
-		        return;
-		    }
+	        System.out.println("Creating Graph...");
+	        graphCreating = true;
+	        //Create the chart
+	        ChartUtilities.saveChartAsJPEG(imgDirMain, chart, imgWidth, imgHeight);
+	    } catch (IOException e) {
+	    	e.printStackTrace();
+	        System.err.println("Error: Check save location");
+	        return;
+	    }
+		graphCreated = true;
 	}
-	
-	
-	
-	
 }

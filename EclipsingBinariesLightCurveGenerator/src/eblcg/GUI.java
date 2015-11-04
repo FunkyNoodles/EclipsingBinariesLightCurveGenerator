@@ -3,6 +3,7 @@ package eblcg;
 import java.io.File;
 
 import javafx.application.Application;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -41,7 +42,7 @@ public class GUI extends Application{
 		TextField star1RadiusText = new TextField();
 		Label star1TempLabel = new Label("Star 1 Temperature (K): ");
 		TextField star1TempText = new TextField();
-		
+
 		Text star2Title = new Text("Star 2: ");
 		Label star2MassLabel = new Label("Star 2 Mass (Solar Mass): ");
 		TextField star2MassText = new TextField();
@@ -49,16 +50,16 @@ public class GUI extends Application{
 		TextField star2RadiusText = new TextField();
 		Label star2TempLabel = new Label("Star 2 Temperature (K): ");
 		TextField star2TempText = new TextField();
-		
+
 		Label orbitLabel = new Label("Orbit: ");
 		Label eccentricityLabel = new Label("Eccentricity: ");
 		TextField eccentricityText = new TextField();
 		Label maxSeparationLabel = new Label("Max Separation Distance (AU): ");
 		TextField maxSeparationText = new TextField();
-		
+
 		Button advancedBtn = new Button("Advanced Settings...");
 		Text advancedTitle = new Text("Advanced Settings");
-		
+
 		VBox star1Settings = new VBox();
 		Label star1RingsLabel = new Label("Star 1 Rings: ");
 		TextField star1RingsText = new TextField();
@@ -75,9 +76,9 @@ public class GUI extends Application{
 		TextField imgHeightText = new TextField();
 		Button advancedConfirmBtn = new Button("Confirm");
 		Button advancedCancelBtn = new Button("Cancel");
-		
+
 		TabPane graphPane = new TabPane();
-		
+
 		VBox controlPaneRight = new VBox();
 		Text controlsTitle = new Text("Controls");
 		Label imageDirLabel = new Label("Images Directory");
@@ -86,18 +87,17 @@ public class GUI extends Application{
 		Button generateGraphBtn = new Button("Generate Graph");
 		Label consoleLabel = new Label("Console: ");
 		TextArea consoleTextArea = new TextArea();
-		
+
 		GridPane advancedRoot = new GridPane();
-		
+
 		FileChooser dirChooser = new FileChooser();
-		
-		
+
 		Stage advancedStage = new Stage();
 		//Initialization & Setup
-		
+
 		controlPaneLeft.setAlignment(Pos.CENTER_LEFT);
 		controlPaneLeft.setPadding(new Insets(10,25,10,25));
-		
+
 		inputTitle.setFont(Font.font(30));
 		presetsChoiceBox.getItems().addAll(
 				"Custom",
@@ -120,12 +120,12 @@ public class GUI extends Application{
 			}
 		});
 		advancedTitle.setFont(Font.font(30));
-		
+		//Set up advanced button window
 		advancedBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
 		        advancedStage.show();
-		        
+
 		        advancedCancelBtn.setOnAction(new EventHandler<ActionEvent>(){
 		        	@Override
 		        	public void handle(ActionEvent event){
@@ -153,21 +153,21 @@ public class GUI extends Application{
 						}else{
 							consoleTextArea.appendText("Please wait, generation is in progress.\n");
 						}
-		        			
+
 		        	}
 		        });
 		    }
 		});
-		
+
 		controlsTitle.setFont(Font.font(30));
-		
+
 		controlPaneRight.setAlignment(Pos.CENTER_RIGHT);
 		controlPaneRight.setPadding(new Insets(10,25,10,25));
 		dirTextArea.setEditable(false);
 		dirTextArea.setPrefSize(200, 100);
 		consoleTextArea.setEditable(false);
 		consoleTextArea.setPrefSize(200, 100);
-		
+
 		advancedRoot.setHgap(10);
         advancedRoot.setVgap(10);
         advancedRoot.setPadding(new Insets(10,10,10,10));
@@ -192,7 +192,7 @@ public class GUI extends Application{
         advancedRoot.add(advancedCancelBtn,1,5);
         advancedStage.setTitle("Advanced Settings");
         advancedStage.setScene(new Scene(advancedRoot,400,250));
-        
+
         star1RingsText.setText("1000");
         star1SectorsText.setText("1000");
         star2RingsText.setText("1000");
@@ -221,11 +221,11 @@ public class GUI extends Application{
 		controlPaneLeft.getChildren().add(eccentricityText);
 		controlPaneLeft.getChildren().add(maxSeparationLabel);
 		controlPaneLeft.getChildren().add(maxSeparationText);
-		
+
 		controlPaneLeft.getChildren().add(advancedBtn);
-		
+
 		rootMain.setCenter(graphPane);
-		
+
 		rootMain.setRight(controlPaneRight);
 		controlPaneRight.getChildren().add(controlsTitle);
 		controlPaneRight.getChildren().add(imageDirLabel);
@@ -234,7 +234,7 @@ public class GUI extends Application{
 		controlPaneRight.getChildren().add(generateGraphBtn);
 		controlPaneRight.getChildren().add(consoleLabel);
 		controlPaneRight.getChildren().add(consoleTextArea);
-		
+
 		dirChooser.setTitle("Choose a Directory");
 		dirChooser.getExtensionFilters().addAll(
 				new FileChooser.ExtensionFilter("JPG", "*.jpg"),
@@ -250,10 +250,10 @@ public class GUI extends Application{
 					LightCurveGenerator.imgDirMain = imgDir;
 					consoleTextArea.appendText("Set image save directory to " + imgDir.toString() + " ;\n");
 				}
-				
+
 			}
 		});
-		
+		//Generate graph after button clicked
 		generateGraphBtn.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent e){
@@ -279,39 +279,57 @@ public class GUI extends Application{
 					return;
 				}
 				if(!LightCurveGenerator.isGenerating){
-					beginThread();
+					beginCalcThread();
 					consoleTextArea.appendText("Generating...\n");
 				}else{
 					consoleTextArea.appendText("Please wait, generation is in progress.\n");
-				}	
+				}
 			}
 		});
+
+		//Thread to check progress
+		Task<Void> checkProgress = new Task<Void>(){
+			@Override
+			public Void call(){
+				while(true){
+					if(LightCurveGenerator.graphCreated){
+						consoleTextArea.appendText("Generation completed.\n");
+						LightCurveGenerator.graphCreated = false;
+					}
+					if(LightCurveGenerator.graphCreating){
+						consoleTextArea.appendText("Creating graph...\n");
+						LightCurveGenerator.graphCreating = false;
+					}
+				}
+			}
+		};
+		new Thread(checkProgress).start();
 		primaryStage.setScene(new Scene(rootMain, 1280, 720));
 		primaryStage.show();
 	}
-	
+
 	public void init(String[] args){
 		launch(args);
 	}
-	
-	public void beginThread(){
+
+	public void beginCalcThread(){
 		//this method gets called from the GUI class and starts a new thread to handle hard work
-		thread1 t1 = new thread1();
+		clacThread t1 = new clacThread();
 		t1.start();
 	}
-	
-	public class thread1 implements Runnable{
+
+	public class clacThread implements Runnable{
 		//thread class
 		private Thread t;
-		
-		public thread1(){
-			
+
+		public clacThread(){
+
 		}
-		
+
 		public void run(){
 			LightCurveGenerator.beginGraph();
 		}
-		
+
 		public void start(){
 			if(t == null){
 				t = new Thread(this, "Thread 1");
