@@ -18,9 +18,9 @@ public class Star {
 	double area = 0;
 	double massInput = 0; //in solar mass
 	double mass = 0; //in kg
-	
+
 	double component[][];
-	
+
 	//Orbital properties
 	double eccentricity = 0;
 	double periapsis = 0;
@@ -31,29 +31,29 @@ public class Star {
 	double vPeri = 0; //Periapsis velocity
 	double vApo = 0; //Apoapsis velocity
 	double period = 0; //seconds
-	
+
 	//Coordinates used when eclipse
 	double x = 0; //actual positions
 	double y = 0;
-	
+
 	double xSector = 0; //sector positions
 	double ySector = 0;
-	
+
 	//for orbits
 	double currentRadius = 0;
 	double xPerspective = 0;
 	double yPerspective = 0;
-	
-	
-	
+
+
+
 	//Interface (percentage output)
 	long percentCounter = 0;
 	long totalCounter = 0;
 	double percentage = 0;
-	
+
 	public Star(){
 	}
-	
+
 	public void initStar(){
 		component = new double[rings][sectors];
 		//Manipulate the values
@@ -63,7 +63,7 @@ public class Star {
 		dth = 2*Math.PI/sectors;
 		area = radius*radius*Math.PI;
 		//Stefan-Boltzmann law and dived by two because only seeing half of the star
-		starDirectBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2; 
+		starDirectBrightness = Math.pow(temperature, 4)*4*Math.PI*radius*radius*Math.pow(5.670373, -8)/2;
 		double ringBrightness = 0;
 		//Because the ring gets larger as radius increases, the brightness assigned to the rings need to be proportional
 		for(int initRingCounter=0; initRingCounter<rings; initRingCounter++){
@@ -74,7 +74,7 @@ public class Star {
 				percentage = (double)percentCounter/totalCounter;
 			}
 		}
-		
+
 		//Now modify the initialized array as gradient vector needs to be taken account
 		//This is easier because every ring has the same gradient of brightness!
 		//Math is based on spherical coordinates theta = arctan(y/Ring radius)
@@ -83,7 +83,7 @@ public class Star {
 		double theta = 0;
 		double ySphere = 0;
 		double rRing = 0;
-		
+
 		for(int modRingCounter=0; modRingCounter<rings; modRingCounter++){
 			rRing = dr*(modRingCounter+1);
 			ySphere = Math.sqrt(radius*radius-rRing*rRing);
@@ -95,7 +95,5 @@ public class Star {
 				percentage = (double)percentCounter/totalCounter;
 			}
 		}
-		//System.out.println(starDirectBrightness);
-		//System.out.println(starBrightness);
 	}
 }

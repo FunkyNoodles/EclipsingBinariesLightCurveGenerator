@@ -14,9 +14,11 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -77,7 +79,11 @@ public class GUI extends Application{
 		Button advancedConfirmBtn = new Button("Confirm");
 		Button advancedCancelBtn = new Button("Cancel");
 
-		TabPane graphPane = new TabPane();
+		//Center Panes
+		BorderPane centerPane = new BorderPane();
+		Label imgOutputTitle = new Label("Image Output");
+		ScrollPane imgScrollPane = new ScrollPane();
+		VBox graphPane = new VBox();
 
 		VBox controlPaneRight = new VBox();
 		Text controlsTitle = new Text("Controls");
@@ -224,7 +230,17 @@ public class GUI extends Application{
 
 		controlPaneLeft.getChildren().add(advancedBtn);
 
-		rootMain.setCenter(graphPane);
+		//Center Pane Ssetups
+		rootMain.setCenter(centerPane);
+		imgOutputTitle.setFont(Font.font(30));
+		centerPane.setTop(imgOutputTitle);
+		centerPane.setCenter(imgScrollPane);
+		imgScrollPane.setContent(graphPane);
+		File file = new File("D:/test.jpg");
+		Image img = new Image(file.toURI().toString());
+		ImageView graphView = new ImageView(img);
+		graphPane.getChildren().add(graphView);
+
 
 		rootMain.setRight(controlPaneRight);
 		controlPaneRight.getChildren().add(controlsTitle);
@@ -312,17 +328,21 @@ public class GUI extends Application{
 		launch(args);
 	}
 
+	public void loadGraph(String imgDir){
+		Image graphImg = new Image(imgDir);
+	}
+
 	public void beginCalcThread(){
 		//this method gets called from the GUI class and starts a new thread to handle hard work
-		clacThread t1 = new clacThread();
+		calcThread t1 = new calcThread();
 		t1.start();
 	}
 
-	public class clacThread implements Runnable{
+	public class calcThread implements Runnable{
 		//thread class
 		private Thread t;
 
-		public clacThread(){
+		public calcThread(){
 
 		}
 
