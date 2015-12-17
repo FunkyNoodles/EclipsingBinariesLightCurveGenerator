@@ -1,5 +1,0 @@
-package eblcg;
-
-public class LightCurveGenerator {
-	Star1 go = new Star1();
-}

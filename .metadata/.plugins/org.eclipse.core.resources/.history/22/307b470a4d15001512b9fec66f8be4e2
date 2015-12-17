@@ -1,8 +1,0 @@
-package eblcg;
-//polar cordinates this time
-public class Star1 {
-	
-	public Star1(){
-		
-	}
-}
