@@ -1,6 +1,11 @@
-package eblcg;
+package io.github.funkynoodles;
+/**
+ * GUI code should be self documenting, with some annotations
+ */
 
 import java.io.File;
+
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
@@ -14,6 +19,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -21,18 +28,23 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class GUI extends Application{
+public class GUI extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		primaryStage.setTitle("Eclipsing Binaries Light Curve Generator");
-		//GUI Declarations
+		// GUI Declarations
 		BorderPane rootMain = new BorderPane();
+		Scene scene = new Scene(rootMain, 1280, 720);
+
+		// Left Pane
 		VBox controlPaneLeft = new VBox();
 		Text inputTitle = new Text("Input");
 		Label presetsLabel = new Label("Presets: ");
@@ -79,12 +91,18 @@ public class GUI extends Application{
 		Button advancedConfirmBtn = new Button("Confirm");
 		Button advancedCancelBtn = new Button("Cancel");
 
-		//Center Panes
+		// Center Pane
 		BorderPane centerPane = new BorderPane();
+		VBox imgOutputContainer = new VBox();
 		Label imgOutputTitle = new Label("Image Output");
+		HBox progressContainer = new HBox();
+		ProgressBar progressBar = new ProgressBar(0);
+		ProgressIndicator progressIndicator = new ProgressIndicator(0);
 		ScrollPane imgScrollPane = new ScrollPane();
-		VBox graphPane = new VBox();
+		Label startInstructionTtile = new Label("Start by clicking \ngenerate graph");
+		StackPane graphPane = new StackPane();
 
+		// Right Pane
 		VBox controlPaneRight = new VBox();
 		Text controlsTitle = new Text("Controls");
 		Label imageDirLabel = new Label("Images Directory");
@@ -99,21 +117,21 @@ public class GUI extends Application{
 		FileChooser dirChooser = new FileChooser();
 
 		Stage advancedStage = new Stage();
-		//Initialization & Setup
+		// Initialization & Setup
 
+		scene.getStylesheets().add(getClass().getResource("styles/style.css").toString());
+
+		// Left Pane Setup
 		controlPaneLeft.setAlignment(Pos.CENTER_LEFT);
-		controlPaneLeft.setPadding(new Insets(10,25,10,25));
+		controlPaneLeft.setPadding(new Insets(10, 25, 10, 25));
 
 		inputTitle.setFont(Font.font(30));
-		presetsChoiceBox.getItems().addAll(
-				"Custom",
-				"Algol AB"
-				);
+		presetsChoiceBox.getItems().addAll("Custom", "Algol AB", "Zeta Reticuli");
 		presetsChoiceBox.setValue("Custom");
-		presetsChoiceBox.setOnAction(new EventHandler<ActionEvent>(){
+		presetsChoiceBox.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent event){
-				if(presetsChoiceBox.getValue() == "Algol AB"){
+			public void handle(ActionEvent event) {
+				if (presetsChoiceBox.getValue() == "Algol AB") {
 					star1MassText.setText("3.59");
 					star1RadiusText.setText("4.13");
 					star1TempText.setText("9200");
@@ -123,86 +141,96 @@ public class GUI extends Application{
 					eccentricityText.setText("0.0");
 					maxSeparationText.setText("0.062");
 				}
+				if (presetsChoiceBox.getValue() == "Zeta Reticuli") {
+					star1MassText.setText("0.958");
+					star1RadiusText.setText("0.84");
+					star1TempText.setText("5746");
+					star2MassText.setText("0.985");
+					star2RadiusText.setText("0.88");
+					star2TempText.setText("5859");
+					eccentricityText.setText("0.3");
+					maxSeparationText.setText("0.062");
+				}
 			}
 		});
 		advancedTitle.setFont(Font.font(30));
-		//Set up advanced button window
-		advancedBtn.setOnAction(new EventHandler<ActionEvent>(){
+		// Set up advanced button window
+		advancedBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
-		        advancedStage.show();
+				advancedStage.show();
 
-		        advancedCancelBtn.setOnAction(new EventHandler<ActionEvent>(){
-		        	@Override
-		        	public void handle(ActionEvent event){
-		        		advancedStage.hide();
-		        	}
-		        });
-		        advancedConfirmBtn.setOnAction(new EventHandler<ActionEvent>(){
-		        	@Override
-		        	public void handle(ActionEvent event){
-		        		if(!LightCurveGenerator.isGenerating){
-		        			try{
-			        			LightCurveGenerator.star1Rings = Integer.parseInt(star1RingsText.getText());
-			        			LightCurveGenerator.star1Sectors = Integer.parseInt(star1SectorsText.getText());
-			        			LightCurveGenerator.star2Rings = Integer.parseInt(star2RingsText.getText());
-			        			LightCurveGenerator.star2Sectors = Integer.parseInt(star2SectorsText.getText());
-			        			LightCurveGenerator.imgWidth = Integer.parseInt(imgWidthText.getText());
-			        			LightCurveGenerator.imgHeight = Integer.parseInt(imgHeightText.getText());
-			        			advancedStage.hide();
-			        		}catch(Exception e){
-			        			Alert advancedAlert = new Alert(AlertType.ERROR);
-			        			advancedAlert.setContentText("Please input valid integers.");
-			        			advancedAlert.showAndWait();
-			        		}
+				advancedCancelBtn.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						advancedStage.hide();
+					}
+				});
+				advancedConfirmBtn.setOnAction(new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent event) {
+						if (!LightCurveGenerator.isGenerating) {
+							try {
+								LightCurveGenerator.star1Rings = Integer.parseInt(star1RingsText.getText());
+								LightCurveGenerator.star1Sectors = Integer.parseInt(star1SectorsText.getText());
+								LightCurveGenerator.star2Rings = Integer.parseInt(star2RingsText.getText());
+								LightCurveGenerator.star2Sectors = Integer.parseInt(star2SectorsText.getText());
+								LightCurveGenerator.imgWidth = Integer.parseInt(imgWidthText.getText());
+								LightCurveGenerator.imgHeight = Integer.parseInt(imgHeightText.getText());
+								advancedStage.hide();
+							} catch (Exception e) {
+								Alert advancedAlert = new Alert(AlertType.ERROR);
+								advancedAlert.setContentText("Please input valid integers.");
+								advancedAlert.showAndWait();
+							}
 							consoleTextArea.appendText("Setting changes confirmed.\n");
-						}else{
+						} else {
 							consoleTextArea.appendText("Please wait, generation is in progress.\n");
 						}
 
-		        	}
-		        });
-		    }
+					}
+				});
+			}
 		});
 
 		controlsTitle.setFont(Font.font(30));
 
 		controlPaneRight.setAlignment(Pos.CENTER_RIGHT);
-		controlPaneRight.setPadding(new Insets(10,25,10,25));
+		controlPaneRight.setPadding(new Insets(10, 25, 10, 25));
 		dirTextArea.setEditable(false);
 		dirTextArea.setPrefSize(200, 100);
 		consoleTextArea.setEditable(false);
 		consoleTextArea.setPrefSize(200, 100);
 
 		advancedRoot.setHgap(10);
-        advancedRoot.setVgap(10);
-        advancedRoot.setPadding(new Insets(10,10,10,10));
-        advancedRoot.add(advancedTitle,0, 0,2,1);
-        advancedRoot.add(star1Settings,0,1,1,4);
-        star1Settings.getChildren().add(star1RingsLabel);
-        star1Settings.getChildren().add(star1RingsText);
-        star1Settings.getChildren().add(star1SectorsLabel);
-        star1Settings.getChildren().add(star1SectorsText);
-        star1Settings.getChildren().add(imgWidthLabel);
-        star1Settings.getChildren().add(imgWidthText);
-        imgWidthText.setText("1280");
-        advancedRoot.add(star2Settings,1,1,1,4);
-        star2Settings.getChildren().add(star2RingsLabel);
-        star2Settings.getChildren().add(star2RingsText);
-        star2Settings.getChildren().add(star2SectorsLabel);
-        star2Settings.getChildren().add(star2SectorsText);
-        star2Settings.getChildren().add(imgHeightLabel);
-        star2Settings.getChildren().add(imgHeightText);
-        imgHeightText.setText("720");
-        advancedRoot.add(advancedConfirmBtn,0,5);
-        advancedRoot.add(advancedCancelBtn,1,5);
-        advancedStage.setTitle("Advanced Settings");
-        advancedStage.setScene(new Scene(advancedRoot,400,250));
+		advancedRoot.setVgap(10);
+		advancedRoot.setPadding(new Insets(10, 10, 10, 10));
+		advancedRoot.add(advancedTitle, 0, 0, 2, 1);
+		advancedRoot.add(star1Settings, 0, 1, 1, 4);
+		star1Settings.getChildren().add(star1RingsLabel);
+		star1Settings.getChildren().add(star1RingsText);
+		star1Settings.getChildren().add(star1SectorsLabel);
+		star1Settings.getChildren().add(star1SectorsText);
+		star1Settings.getChildren().add(imgWidthLabel);
+		star1Settings.getChildren().add(imgWidthText);
+		imgWidthText.setText("1280");
+		advancedRoot.add(star2Settings, 1, 1, 1, 4);
+		star2Settings.getChildren().add(star2RingsLabel);
+		star2Settings.getChildren().add(star2RingsText);
+		star2Settings.getChildren().add(star2SectorsLabel);
+		star2Settings.getChildren().add(star2SectorsText);
+		star2Settings.getChildren().add(imgHeightLabel);
+		star2Settings.getChildren().add(imgHeightText);
+		imgHeightText.setText("720");
+		advancedRoot.add(advancedConfirmBtn, 0, 5);
+		advancedRoot.add(advancedCancelBtn, 1, 5);
+		advancedStage.setTitle("Advanced Settings");
+		advancedStage.setScene(new Scene(advancedRoot, 400, 250));
 
-        star1RingsText.setText("1000");
-        star1SectorsText.setText("1000");
-        star2RingsText.setText("1000");
-        star2SectorsText.setText("1000");
+		star1RingsText.setText("1000");
+		star1SectorsText.setText("1000");
+		star2RingsText.setText("1000");
+		star2SectorsText.setText("1000");
 
 		rootMain.setLeft(controlPaneLeft);
 		controlPaneLeft.getChildren().add(inputTitle);
@@ -230,18 +258,34 @@ public class GUI extends Application{
 
 		controlPaneLeft.getChildren().add(advancedBtn);
 
-		//Center Pane Ssetups
+		// Center Pane Setups
 		rootMain.setCenter(centerPane);
 		imgOutputTitle.setFont(Font.font(30));
-		centerPane.setTop(imgOutputTitle);
+		centerPane.setTop(imgOutputContainer);
+		imgOutputContainer.getChildren().add(imgOutputTitle);
+		imgOutputContainer.getChildren().add(progressContainer);
+		progressContainer.getChildren().add(progressBar);
+		progressBar.prefWidthProperty().bind(progressContainer.widthProperty().subtract(30));
+		progressBar.setPadding(new Insets(0, 10, 0, 0));
+		progressContainer.getChildren().add(progressIndicator);
+		imgOutputContainer.setPadding(new Insets(10, 0, 0, 0));
+		centerPane.setPadding(new Insets(10, 0, 0, 0));
 		centerPane.setCenter(imgScrollPane);
+
+		BorderPane.setAlignment(imgOutputContainer, Pos.CENTER);
+		imgOutputContainer.setAlignment(Pos.CENTER);
+		progressContainer.setAlignment(Pos.CENTER);
+		BorderPane.setAlignment(imgScrollPane, Pos.CENTER);
+		//centerPane.setBottom(progressBar);
+
+		imgScrollPane.getStyleClass().add("imgScrollPane");
+		imgScrollPane.setFitToHeight(true);
+		imgScrollPane.setFitToWidth(true);
 		imgScrollPane.setContent(graphPane);
-		File file = new File("D:/test.jpg");
-		Image img = new Image(file.toURI().toString());
-		ImageView graphView = new ImageView(img);
-		graphPane.getChildren().add(graphView);
+		startInstructionTtile.setFont(Font.font(50));
+		graphPane.getChildren().add(startInstructionTtile);
 
-
+		// Right Pane Setups
 		rootMain.setRight(controlPaneRight);
 		controlPaneRight.getChildren().add(controlsTitle);
 		controlPaneRight.getChildren().add(imageDirLabel);
@@ -252,16 +296,13 @@ public class GUI extends Application{
 		controlPaneRight.getChildren().add(consoleTextArea);
 
 		dirChooser.setTitle("Choose a Directory");
-		dirChooser.getExtensionFilters().addAll(
-				new FileChooser.ExtensionFilter("JPG", "*.jpg"),
-                new FileChooser.ExtensionFilter("PNG", "*.png"),
-				new FileChooser.ExtensionFilter("All Images", "*.*")
-            );
-		browseBtn.setOnAction(new EventHandler<ActionEvent>(){
+		dirChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JPG", "*.jpg"),
+				new FileChooser.ExtensionFilter("PNG", "*.png"), new FileChooser.ExtensionFilter("All Images", "*.*"));
+		browseBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent e){
+			public void handle(ActionEvent e) {
 				File imgDir = dirChooser.showSaveDialog(primaryStage);
-				if(imgDir != null){
+				if (imgDir != null) {
 					dirTextArea.setText(imgDir.toString());
 					LightCurveGenerator.imgDirMain = imgDir;
 					consoleTextArea.appendText("Set image save directory to " + imgDir.toString() + " ;\n");
@@ -269,17 +310,18 @@ public class GUI extends Application{
 
 			}
 		});
-		//Generate graph after button clicked
-		generateGraphBtn.setOnAction(new EventHandler<ActionEvent>(){
+		// Generate graph after button clicked
+		generateGraphBtn.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
-			public void handle(ActionEvent e){
-				if(LightCurveGenerator.imgDirMain == null){
+			public void handle(ActionEvent e) {
+				if (LightCurveGenerator.imgDirMain == null) {
 					Alert dirVoidAlert = new Alert(AlertType.ERROR);
-					dirVoidAlert.setContentText("Please choose a directory to store light curve!\nClick the 'Browse' Button above to choose a directory.");
+					dirVoidAlert.setContentText(
+							"Please choose a directory to store light curve!\nClick the 'Browse' Button above to choose a directory.");
 					dirVoidAlert.showAndWait();
 					return;
 				}
-				try{
+				try {
 					LightCurveGenerator.star1.massInput = Double.parseDouble(star1MassText.getText());
 					LightCurveGenerator.star1.radiusInput = Double.parseDouble(star1RadiusText.getText());
 					LightCurveGenerator.star1.temperature = Double.parseDouble(star1TempText.getText());
@@ -288,71 +330,83 @@ public class GUI extends Application{
 					LightCurveGenerator.star2.temperature = Double.parseDouble(star2TempText.getText());
 					LightCurveGenerator.systemEccentricity = Double.parseDouble(eccentricityText.getText());
 					LightCurveGenerator.separationDistance = Double.parseDouble(maxSeparationText.getText());
-				}catch(Exception e1){
+				} catch (Exception e1) {
 					Alert generateGraphAlert = new Alert(AlertType.ERROR);
 					generateGraphAlert.setContentText("Please input valid values.");
 					generateGraphAlert.showAndWait();
 					return;
 				}
-				if(!LightCurveGenerator.isGenerating){
+
+				// Thread to check progress
+				Task<Void> checkProgress = new Task<Void>() {
+					@Override
+					public Void call() {
+						while (true) {
+							if (LightCurveGenerator.isGenerating) {
+								progressBar.setProgress(LightCurveGenerator.getProgressPercentage());
+								progressIndicator.setProgress(LightCurveGenerator.getProgressPercentage());
+							}
+							if (LightCurveGenerator.graphCreated) {
+								consoleTextArea.appendText("Generation completed.\n");
+								LightCurveGenerator.graphCreated = false;
+								graphPane.getChildren().removeAll();
+								graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain));
+								return null;
+							}
+							if (LightCurveGenerator.graphCreating) {
+								consoleTextArea.appendText("Creating graph...\n");
+								LightCurveGenerator.graphCreating = false;
+							}
+						}
+					}
+				};
+				if (!LightCurveGenerator.isGenerating) {
+
+					new Thread(checkProgress).start();
 					beginCalcThread();
 					consoleTextArea.appendText("Generating...\n");
-				}else{
+				} else {
 					consoleTextArea.appendText("Please wait, generation is in progress.\n");
 				}
 			}
 		});
-
-		//Thread to check progress
-		Task<Void> checkProgress = new Task<Void>(){
-			@Override
-			public Void call(){
-				while(true){
-					if(LightCurveGenerator.graphCreated){
-						consoleTextArea.appendText("Generation completed.\n");
-						LightCurveGenerator.graphCreated = false;
-					}
-					if(LightCurveGenerator.graphCreating){
-						consoleTextArea.appendText("Creating graph...\n");
-						LightCurveGenerator.graphCreating = false;
-					}
-				}
-			}
-		};
-		new Thread(checkProgress).start();
-		primaryStage.setScene(new Scene(rootMain, 1280, 720));
+		primaryStage.setScene(scene);
 		primaryStage.show();
 	}
 
-	public void init(String[] args){
+	public void init(String[] args) {
 		launch(args);
 	}
 
-	public void loadGraph(String imgDir){
-		Image graphImg = new Image(imgDir);
+	public ImageView loadGraph(File imgDir) {
+		Image img = new Image(imgDir.toURI().toString());
+		ImageView graphView = new ImageView(img);
+		return graphView;
 	}
 
-	public void beginCalcThread(){
-		//this method gets called from the GUI class and starts a new thread to handle hard work
+	public void beginCalcThread() {
+		// this method gets called from the GUI class and starts a new thread to
+		// handle hard work
 		calcThread t1 = new calcThread();
 		t1.start();
 	}
 
-	public class calcThread implements Runnable{
-		//thread class
+	public class calcThread implements Runnable {
+		// thread class
 		private Thread t;
 
-		public calcThread(){
+		public calcThread() {
 
 		}
 
-		public void run(){
+		public void run() {
 			LightCurveGenerator.beginGraph();
+			return;
 		}
 
-		public void start(){
-			if(t == null){
-				t = new Thread(this, "Thread 1");
+		public void start() {
+			if (t == null) {
+				t = new Thread(this, "Calculate Thread");
 				t.start();
 			}
 		}

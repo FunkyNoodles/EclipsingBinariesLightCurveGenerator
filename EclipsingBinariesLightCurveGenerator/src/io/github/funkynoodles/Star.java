@@ -2,7 +2,7 @@
  * The unit of mass is in solar mass, later converted to kg
  * The unit of radius is in solar radius, later converted to m
  */
-package eblcg;
+package io.github.funkynoodles;
 //polar coordinates this time (r, theta)
 public class Star {
 	//Star properties
