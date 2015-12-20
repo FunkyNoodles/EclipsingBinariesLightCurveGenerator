@@ -38,6 +38,7 @@ public class LightCurveGenerator {
 	public static volatile boolean isGenerating = false;
 	public static volatile boolean graphCreating = false;
 	public static volatile boolean graphCreated = false;
+	public static volatile boolean isRunning = false;
 
 	// ArrayLists
 	static ArrayList<Double> plotPoints = new ArrayList<Double>();
@@ -61,9 +62,17 @@ public class LightCurveGenerator {
 	}
 
 	public static void beginGraph() {
+		// Reset arraylists
+		plotPoints.clear();
+		derivative.clear();
+
 		isGenerating = true;
 		initOrbit(systemEccentricity, separationDistance);
-		progress();
+		progress(); // Longest step
+		if (!isRunning) {
+			isGenerating = false;
+			return;
+		}
 		generateGraph();
 		isGenerating = false;
 	}
@@ -71,7 +80,7 @@ public class LightCurveGenerator {
 	public static void progress() {
 		timeIncrement = star1.period / timeIntervel;
 		double currentAngle = 0;
-		while (currentAngle <= 2 * Math.PI) {
+		while (currentAngle <= 2 * Math.PI && isRunning) {
 			// for star1, theta=0 points towards center, so use negative for
 			// ellipse in polar coordinates
 			star1.currentRadius = star1.semiMajorAxis * (1 - Math.pow(star1.eccentricity, 2)) / (1 - star1.eccentricity * Math.cos(currentAngle));

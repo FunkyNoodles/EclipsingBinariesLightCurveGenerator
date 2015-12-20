@@ -3,16 +3,12 @@ package io.github.funkynoodles;
  * GUI code should be self documenting, with some annotations
  */
 
-import java.awt.event.WindowEvent;
 import java.io.File;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -339,48 +335,15 @@ public class GUI extends Application {
 					return;
 				}
 
+				LightCurveGenerator.isRunning = true;
+
 				// Thread to check progress
-				class CheckThread implements Runnable {
-					private Thread t;
-
-					public CheckThread() {
-
-					}
-
-					public void run() {
-						while (true) {
-							if (LightCurveGenerator.isGenerating) {
-								progressBar.setProgress(LightCurveGenerator.getProgressPercentage());
-								progressIndicator.setProgress(LightCurveGenerator.getProgressPercentage());
-								//graphPane.getChildren().remove(startInstructionTtile);
-							}
-							if (LightCurveGenerator.graphCreated) {
-								consoleTextArea.appendText("Generation completed.\n");
-								LightCurveGenerator.graphCreated = false;
-								//graphPane.getChildren().removeAll();
-								graphPane.getChildren().add(controlsTitle);
-								//graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain));
-								return;
-							}
-							if (LightCurveGenerator.graphCreating) {
-								consoleTextArea.appendText("Creating graph...\n");
-								LightCurveGenerator.graphCreating = false;
-							}
-						}
-					}
-
-					public void start() {
-						if (t == null) {
-							t = new Thread(this, "Check Thread");
-							t.start();
-						}
-					}
-				}
 				Task<Void> checkProgress = new Task<Void>() {
 					@Override
 					public Void call() {
 						while (true) {
 							if (LightCurveGenerator.isGenerating) {
+								//Update progress bar and indicator
 								progressBar.setProgress(LightCurveGenerator.getProgressPercentage());
 								progressIndicator.setProgress(LightCurveGenerator.getProgressPercentage());
 							}
@@ -395,12 +358,15 @@ public class GUI extends Application {
 								Platform.runLater(()->graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain)));
 								return null;
 							}
+							if (!primaryStage.isShowing()) {
+								//Stop other child threads when closed
+								t1.stop();
+								return null;
+							}
 						}
 					}
 				};
 				if (!LightCurveGenerator.isGenerating) {
-					CheckThread thread = new CheckThread();
-					//thread.start();
 					new Thread(checkProgress).start();
 					beginCalcThread();
 					consoleTextArea.appendText("Generating...\n");
@@ -423,19 +389,21 @@ public class GUI extends Application {
 		return graphView;
 	}
 
+	CalcThread t1 = new CalcThread();
 	public void beginCalcThread() {
 		// this method gets called from the GUI class and starts a new thread to
 		// handle hard work
-		calcThread t1 = new calcThread();
 		t1.start();
 	}
 
-	public class calcThread implements Runnable {
+	public void stopCalcThread(){
+	}
+
+	public class CalcThread implements Runnable {
 		// thread class
 		private Thread t;
 
-		public calcThread() {
-
+		public CalcThread() {
 		}
 
 		public void run() {
@@ -448,6 +416,10 @@ public class GUI extends Application {
 				t = new Thread(this, "Calculate Thread");
 				t.start();
 			}
+		}
+
+		public void stop(){
+			LightCurveGenerator.isRunning = false;
 		}
 	}
 }
