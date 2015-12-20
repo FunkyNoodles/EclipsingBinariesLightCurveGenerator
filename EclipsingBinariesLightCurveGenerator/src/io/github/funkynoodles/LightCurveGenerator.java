@@ -35,7 +35,7 @@ public class LightCurveGenerator {
 	static int imgWidth = 1280;
 	static int imgHeight = 720;
 
-	public static boolean isGenerating = false;
+	public static volatile boolean isGenerating = false;
 	public static volatile boolean graphCreating = false;
 	public static volatile boolean graphCreated = false;
 

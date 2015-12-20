@@ -3,13 +3,16 @@ package io.github.funkynoodles;
  * GUI code should be self documenting, with some annotations
  */
 
+import java.awt.event.WindowEvent;
 import java.io.File;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -316,8 +319,7 @@ public class GUI extends Application {
 			public void handle(ActionEvent e) {
 				if (LightCurveGenerator.imgDirMain == null) {
 					Alert dirVoidAlert = new Alert(AlertType.ERROR);
-					dirVoidAlert.setContentText(
-							"Please choose a directory to store light curve!\nClick the 'Browse' Button above to choose a directory.");
+					dirVoidAlert.setContentText("Please choose a directory to store light curve!\nClick the 'Browse' Button above to choose a directory.");
 					dirVoidAlert.showAndWait();
 					return;
 				}
@@ -338,6 +340,42 @@ public class GUI extends Application {
 				}
 
 				// Thread to check progress
+				class CheckThread implements Runnable {
+					private Thread t;
+
+					public CheckThread() {
+
+					}
+
+					public void run() {
+						while (true) {
+							if (LightCurveGenerator.isGenerating) {
+								progressBar.setProgress(LightCurveGenerator.getProgressPercentage());
+								progressIndicator.setProgress(LightCurveGenerator.getProgressPercentage());
+								//graphPane.getChildren().remove(startInstructionTtile);
+							}
+							if (LightCurveGenerator.graphCreated) {
+								consoleTextArea.appendText("Generation completed.\n");
+								LightCurveGenerator.graphCreated = false;
+								//graphPane.getChildren().removeAll();
+								graphPane.getChildren().add(controlsTitle);
+								//graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain));
+								return;
+							}
+							if (LightCurveGenerator.graphCreating) {
+								consoleTextArea.appendText("Creating graph...\n");
+								LightCurveGenerator.graphCreating = false;
+							}
+						}
+					}
+
+					public void start() {
+						if (t == null) {
+							t = new Thread(this, "Check Thread");
+							t.start();
+						}
+					}
+				}
 				Task<Void> checkProgress = new Task<Void>() {
 					@Override
 					public Void call() {
@@ -346,22 +384,23 @@ public class GUI extends Application {
 								progressBar.setProgress(LightCurveGenerator.getProgressPercentage());
 								progressIndicator.setProgress(LightCurveGenerator.getProgressPercentage());
 							}
-							if (LightCurveGenerator.graphCreated) {
-								consoleTextArea.appendText("Generation completed.\n");
-								LightCurveGenerator.graphCreated = false;
-								graphPane.getChildren().removeAll();
-								graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain));
-								return null;
-							}
 							if (LightCurveGenerator.graphCreating) {
 								consoleTextArea.appendText("Creating graph...\n");
 								LightCurveGenerator.graphCreating = false;
+							}
+							if (LightCurveGenerator.graphCreated) {
+								consoleTextArea.appendText("Generation completed.\n");
+								LightCurveGenerator.graphCreated = false;
+								Platform.runLater(()->graphPane.getChildren().clear());
+								Platform.runLater(()->graphPane.getChildren().add(loadGraph(LightCurveGenerator.imgDirMain)));
+								return null;
 							}
 						}
 					}
 				};
 				if (!LightCurveGenerator.isGenerating) {
-
+					CheckThread thread = new CheckThread();
+					//thread.start();
 					new Thread(checkProgress).start();
 					beginCalcThread();
 					consoleTextArea.appendText("Generating...\n");
