@@ -18,11 +18,15 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -43,6 +47,21 @@ public class GUI extends Application {
 		BorderPane rootMain = new BorderPane();
 		Scene scene = new Scene(rootMain, 1280, 720);
 
+		// Top Pane
+		VBox topContainer = new VBox();
+		MenuBar mainMenuBar = new MenuBar();
+		ToolBar toolBar = new ToolBar();
+
+		//// Menus
+		Menu fileMenu = new Menu("File");
+		MenuItem openFileMenuItem = new MenuItem("Open File");
+		MenuItem exitMenuItem = new MenuItem("Exit");
+
+		Menu editMenu = new Menu("Edit");
+		MenuItem propertiesMenuItem = new MenuItem("Properties");
+
+		Menu helpMenu = new Menu("Help");
+		MenuItem aboutMenuItem = new MenuItem("About");
 		// Left Pane
 		VBox controlPaneLeft = new VBox();
 		Text inputTitle = new Text("Input");
@@ -256,6 +275,24 @@ public class GUI extends Application {
 		controlPaneLeft.getChildren().add(maxSeparationText);
 
 		controlPaneLeft.getChildren().add(advancedBtn);
+
+		// Top Pane Setups
+		topContainer.getChildren().add(mainMenuBar);
+		topContainer.getChildren().add(toolBar);
+
+		exitMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent event){
+				System.exit(0);
+			}
+		});
+		fileMenu.getItems().addAll(openFileMenuItem, exitMenuItem);
+		editMenu.getItems().addAll(propertiesMenuItem);
+		helpMenu.getItems().addAll(aboutMenuItem);
+
+		mainMenuBar.getMenus().addAll(fileMenu, editMenu, helpMenu);
+
+		rootMain.setTop(topContainer);
 
 		// Center Pane Setups
 		rootMain.setCenter(centerPane);
